@@ -19,13 +19,22 @@ export async function POST(req: NextRequest) {
         const prompt = `
   You are a Technical Literacy Agent. Analyze the uploaded documentation/codebase.
   1. Identify the 'Core Logic' (The 30% signal that explains the 70% noise).
-  2. Break down the content into predictions, a technical matrix, and a Mermaid.js logic flow.
+  2. Break down the content into predictions, a technical matrix, a Mermaid.js logic flow, vault blocks, and a dependency matrix.
+  
+  For 'vaultBlocks', automatically sort information into these three buckets:
+  - Syntax: Essential code snippets and API definitions.
+  - Logic: The "why" behind the implementation patterns.
+  - Architecture: High-level system design and dependency relationships.
+
+  For 'dependencyMatrix', detect libraries/frameworks (e.g., Next.js, OpenAI, Tailwind) and flag their 'impact' (High Impact | Low Impact) and 'role' in the project.
 
   JSON structure:
   {
     "predictions": [ { "question": "string", "confidence": number, "reason": "string" } ],
     "technicalMatrix": [ { "concept": "string", "difficulty": "string", "priority": "string", "prob": number } ],
-    "mermaidChart": "string (Valid Mermaid.js 'graph TD' syntax representing the logic flow)"
+    "mermaidChart": "string (Valid Mermaid.js 'graph TD' syntax representing the logic flow)",
+    "vaultBlocks": [ { "title": "string", "content": "string", "category": "syntax" | "logic" | "architecture", "tags": ["string"] } ],
+    "dependencyMatrix": [ { "library": "string", "impact": "High Impact" | "Low Impact", "role": "string", "version": "string | unknown" } ]
   }
 
   Context: "${rawText}"

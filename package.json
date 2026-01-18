@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.12",
+    "@aws-sdk/client-bedrock-runtime": "^3.971.0",
     "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^5.22.0",
     "ai": "^6.0.39",

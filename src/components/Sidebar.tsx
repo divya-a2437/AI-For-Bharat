@@ -3,26 +3,58 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Target, BookOpen, Settings, ChevronLeft, ChevronRight, Menu, Brain } from 'lucide-react';
+import {
+    LayoutDashboard, Target, BookOpen, Settings, ChevronLeft, ChevronRight,
+    Menu, Brain, Terminal, Workflow, Box, Database, Zap
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Sidebar() {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const pathname = usePathname();
 
-    const menuItems = [
-        { name: 'Overview', icon: <LayoutDashboard size={20} />, href: '/' },
-        { name: 'Learning Assistant', icon: <Brain size={20} />, href: '/learning-assistant' },
-        { name: 'Exam Predictor', icon: <Target size={20} />, href: '/predictor' },
-        { name: 'Study Library', icon: <BookOpen size={20} />, href: '/library' },
-        { name: 'Settings', icon: <Settings size={20} />, href: '/settings' },
+    const sections = [
+        {
+            title: 'General',
+            items: [
+                { name: 'Overview', icon: <LayoutDashboard size={20} />, href: '/', subLabel: 'Main dashboard' },
+                { name: 'Workflow Assistant', icon: <Brain size={20} />, href: '/workflow-assistant', subLabel: 'Study extraction engine' },
+                { name: 'Exam Predictor', icon: <Target size={20} />, href: '/predictor', subLabel: 'Probability analysis' },
+            ]
+        },
+        {
+            title: 'Productivity',
+            items: [
+                { name: 'Logic Decompiler', icon: <Terminal size={18} />, href: '/decompiler', subLabel: 'Break down complex code' },
+            ]
+        },
+        {
+            title: 'Organization',
+            items: [
+                { name: 'The Atomic Vault', icon: <Box size={18} />, href: '/vault', subLabel: 'Modular knowledge blocks' },
+                { name: 'Dependency Matrix', icon: <Database size={18} />, href: '/matrix', subLabel: 'Map tech ecosystems' },
+                { name: 'Study Library', icon: <BookOpen size={20} />, href: '/library', subLabel: 'Resource collection' },
+            ]
+        },
+        {
+            title: 'Skill Building',
+            items: [
+                { name: 'Simulation Lab', icon: <Zap size={18} />, href: '/lab', subLabel: 'Active recall & mocks' },
+            ]
+        },
+        {
+            title: 'System',
+            items: [
+                { name: 'Settings', icon: <Settings size={20} />, href: '/settings', subLabel: 'Configuration' },
+            ]
+        }
     ];
 
     return (
         <aside
             className={`
                 sticky top-0 h-screen bg-[#050505] border-r border-white/10 hidden md:flex flex-col transition-all duration-300 ease-in-out z-[100]
-                ${isCollapsed ? 'w-20' : 'w-64'}
+                ${isCollapsed ? 'w-20' : 'w-72'}
             `}
         >
             <div className="p-6 flex items-center gap-3 justify-between">
@@ -49,49 +81,90 @@ export default function Sidebar() {
                 </button>
             </div>
 
-            <nav className="flex-1 px-4 space-y-2 overflow-y-auto custom-scrollbar">
-                {menuItems.map((item) => {
-                    const isActive = pathname === item.href;
-                    return (
-                        <Link
-                            key={item.name}
-                            href={item.href}
-                            className={`
-                                flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-lg transition-all
-                                ${isActive
-                                    ? 'bg-violet-500/10 text-violet-400 border border-violet-500/20'
-                                    : 'text-slate-400 hover:bg-white/5 hover:text-white'
-                                }
-                                ${isCollapsed ? 'justify-center' : ''}
-                            `}
-                        >
-                            <div className={`${isActive ? 'text-violet-400' : 'text-slate-500'}`}>
-                                {item.icon}
+            <nav className="flex-1 px-4 space-y-6 overflow-y-auto custom-scrollbar pt-2">
+                {sections.map((section) => (
+                    <div key={section.title} className="space-y-1">
+                        {!isCollapsed && (
+                            <div className="pt-2 pb-2 px-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
+                                {section.title}
                             </div>
+                        )}
+                        <div className="space-y-1">
+                            {section.items.map((item) => {
+                                const isActive = pathname === item.href;
+                                return (
+                                    <Link
+                                        key={item.name}
+                                        href={item.href}
+                                        className={`
+                                            flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-lg transition-all group relative
+                                            ${isActive
+                                                ? 'bg-violet-500/10 text-violet-400 border border-violet-500/20'
+                                                : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                                            }
+                                            ${isCollapsed ? 'justify-center' : ''}
+                                        `}
+                                    >
+                                        <div className={`${isActive ? 'text-violet-400' : 'text-slate-500 group-hover:text-white transition-colors'}`}>
+                                            {item.icon}
+                                        </div>
 
-                            {!isCollapsed && (
-                                <motion.span
-                                    initial={{ opacity: 0, width: 0 }}
-                                    animate={{ opacity: 1, width: 'auto' }}
-                                    exit={{ opacity: 0, width: 0 }}
-                                    className="whitespace-nowrap overflow-hidden"
-                                >
-                                    {item.name}
-                                </motion.span>
-                            )}
+                                        {!isCollapsed && (
+                                            <div className="flex flex-col overflow-hidden">
+                                                <motion.span
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                    className="whitespace-nowrap font-bold text-xs"
+                                                >
+                                                    {item.name}
+                                                </motion.span>
+                                                <span className="text-[9px] text-slate-600 font-medium uppercase tracking-tight group-hover:text-slate-400 transition-colors">
+                                                    {item.subLabel}
+                                                </span>
+                                            </div>
+                                        )}
 
-                            {/* Tooltip for collapsed state */}
-                            {isCollapsed && (
-                                <div className="absolute left-16 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap border border-white/10 shadow-xl">
-                                    {item.name}
-                                </div>
-                            )}
-                        </Link>
-                    );
-                })}
+                                        {isCollapsed && (
+                                            <div className="absolute left-16 bg-[#0a0a0a] text-white text-[10px] px-3 py-2 rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300 z-50 whitespace-nowrap border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.8)] scale-90 group-hover:scale-100">
+                                                <div className="font-bold">{item.name}</div>
+                                                <div className="text-slate-500 text-[8px] font-medium">{item.subLabel}</div>
+                                            </div>
+                                        )}
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ))}
             </nav>
 
             <div className="p-4 border-t border-white/10">
+                <AnimatePresence>
+                    {!isCollapsed && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            className="p-4 bg-violet-950/20 rounded-2xl border border-violet-500/20 mb-6"
+                        >
+                            <p className="text-[9px] font-bold text-violet-400 uppercase mb-3 tracking-widest">System Intelligence</p>
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[10px] text-slate-300 font-medium">The Archivist</span>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+                                        <span className="text-[8px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-black">INDEXING</span>
+                                    </div>
+                                </div>
+                                <div className="flex items-center justify-between opacity-50">
+                                    <span className="text-[10px] text-slate-300 font-medium">The Explainer</span>
+                                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-slate-500/10 text-slate-400 border border-slate-500/20 font-black">IDLE</span>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
                 <Link href="/profile">
                     {!isCollapsed ? (
                         <div className="flex items-center gap-3 p-2 bg-white/5 hover:bg-white/10 transition-colors rounded-lg cursor-pointer group">

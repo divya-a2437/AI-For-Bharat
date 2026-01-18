@@ -6,19 +6,45 @@ import {
     Upload, Mic, FileText, Sparkles,
     Layers, Ghost, Zap, Clock, Globe,
     FileVideo, Music, Play, ChevronRight,
-    Brain, Target, BookOpen
+    Brain, Target, BookOpen, Loader2
 } from "lucide-react";
 import BentoCard from "@/components/BentoCard";
 import AgentRow from "@/components/AgentRow";
 import Flashcard from "@/components/Flashcard";
 
-export default function LearningAssistant() {
+export default function WorkflowAssistant() {
     const [currentTime, setCurrentTime] = useState("");
     const [file, setFile] = useState<File | null>(null);
+    const [status, setStatus] = useState<"idle" | "processing" | "done">("idle");
+    const [results, setResults] = useState<{ question: string; reason: string }[]>([]);
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            setFile(e.target.files[0]);
+            const selectedFile = e.target.files[0];
+            setFile(selectedFile);
+            handleProcess(selectedFile);
+        }
+    };
+
+    const handleProcess = async (targetFile: File) => {
+        try {
+            setStatus("processing");
+            const formData = new FormData();
+            formData.append("file", targetFile);
+
+            const res = await fetch("/api/predict", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!res.ok) throw new Error("Processing failed");
+
+            const data = await res.json();
+            setResults(data.predictions || []);
+            setStatus("done");
+        } catch (error) {
+            console.error("AI Distillation failed:", error);
+            setStatus("idle");
         }
     };
 
@@ -74,53 +100,66 @@ export default function LearningAssistant() {
                     className="md:col-span-8 border-violet-500/10 min-h-[500px] flex flex-col"
                 >
                     <div className="mt-10 flex-1 flex flex-col">
-                        <label className="relative w-full h-64 border-2 border-dashed border-white/5 rounded-[40px] flex flex-col items-center justify-center group hover:bg-white/[0.01] hover:border-violet-500/20 transition-all duration-500 cursor-pointer">
+                        <label className={`relative w-full h-64 border-2 border-dashed border-white/5 rounded-[40px] flex flex-col items-center justify-center group hover:bg-white/[0.01] hover:border-violet-500/20 transition-all duration-500 cursor-pointer ${status === 'processing' ? 'pointer-events-none' : ''}`}>
                             <input type="file" className="hidden" onChange={handleFileUpload} accept=".pdf,.docx,.pptx,.txt" />
-                            <div className="relative mb-6">
-                                {/* Central Glow Icon */}
-                                <div className="absolute inset-0 bg-blue-500 blur-[40px] opacity-30 animate-pulse" />
-                                <div className="relative flex items-center justify-center">
-                                    {/* Floating Music Icon */}
-                                    <motion.div
-                                        animate={{ y: [0, -8, 0], x: [0, -5, 0] }}
-                                        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                                        className="absolute -left-16 bottom-0 p-2.5 bg-[#1a1a2e]/80 backdrop-blur-md rounded-xl border border-white/10 text-blue-400 shadow-2xl"
-                                    >
-                                        <Music size={18} />
-                                    </motion.div>
 
-                                    {/* Main File Icon */}
-                                    <div className="p-6 bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl text-white shadow-[0_0_40px_rgba(37,99,235,0.4)] ring-1 ring-white/20">
-                                        <FileText size={40} />
+                            {status === 'processing' ? (
+                                <div className="flex flex-col items-center gap-4">
+                                    <div className="relative">
+                                        <div className="absolute inset-0 bg-violet-500 blur-2xl opacity-20 animate-pulse" />
+                                        <Loader2 size={40} className="text-violet-500 animate-spin" />
+                                    </div>
+                                    <p className="text-sm font-black text-violet-400 uppercase tracking-[0.2em] animate-pulse">Neural Sync in Progress</p>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="relative mb-6">
+                                        {/* Central Glow Icon */}
+                                        <div className="absolute inset-0 bg-blue-500 blur-[40px] opacity-30 animate-pulse" />
+                                        <div className="relative flex items-center justify-center">
+                                            {/* Floating Music Icon */}
+                                            <motion.div
+                                                animate={{ y: [0, -8, 0], x: [0, -5, 0] }}
+                                                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                                                className="absolute -left-16 bottom-0 p-2.5 bg-[#1a1a2e]/80 backdrop-blur-md rounded-xl border border-white/10 text-blue-400 shadow-2xl"
+                                            >
+                                                <Music size={18} />
+                                            </motion.div>
+
+                                            {/* Main File Icon */}
+                                            <div className="p-6 bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl text-white shadow-[0_0_40px_rgba(37,99,235,0.4)] ring-1 ring-white/20">
+                                                <FileText size={40} />
+                                            </div>
+
+                                            {/* Floating Video Icon */}
+                                            <motion.div
+                                                animate={{ y: [0, -12, 0], x: [0, 5, 0] }}
+                                                transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
+                                                className="absolute -right-12 -top-4 p-2.5 bg-[#1a1a2e]/80 backdrop-blur-md rounded-xl border border-white/10 text-violet-400 shadow-2xl"
+                                            >
+                                                <FileVideo size={18} />
+                                            </motion.div>
+                                        </div>
                                     </div>
 
-                                    {/* Floating Video Icon */}
-                                    <motion.div
-                                        animate={{ y: [0, -12, 0], x: [0, 5, 0] }}
-                                        transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
-                                        className="absolute -right-12 -top-4 p-2.5 bg-[#1a1a2e]/80 backdrop-blur-md rounded-xl border border-white/10 text-violet-400 shadow-2xl"
-                                    >
-                                        <FileVideo size={18} />
-                                    </motion.div>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col items-center gap-2">
-                                <div className="text-slate-500 mb-1">
-                                    <ChevronRight size={16} className="-rotate-90" />
-                                </div>
-                                <p className="text-sm font-bold text-slate-300 tracking-tight">
-                                    {file ? `Selected: ${file.name}` : "Drag & drop files here or click to browse"}
-                                </p>
-                            </div>
+                                    <div className="flex flex-col items-center gap-2">
+                                        <div className="text-slate-500 mb-1">
+                                            <ChevronRight size={16} className="-rotate-90" />
+                                        </div>
+                                        <p className="text-sm font-bold text-slate-300 tracking-tight">
+                                            {file ? `Selected: ${file.name}` : "Drag & drop files here or click to browse"}
+                                        </p>
+                                    </div>
+                                </>
+                            )}
                         </label>
 
                         {/* Action Section */}
                         <div className="mt-8 flex flex-col items-center">
-                            <label className="px-12 py-4 bg-gradient-to-r from-blue-500 via-blue-600 to-violet-600 rounded-full text-white font-black uppercase tracking-[0.1em] flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(37,99,235,0.3)] cursor-pointer">
+                            <label className={`px-12 py-4 bg-gradient-to-r from-blue-500 via-blue-600 to-violet-600 rounded-full text-white font-black uppercase tracking-[0.1em] flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(37,99,235,0.3)] cursor-pointer ${status === 'processing' ? 'opacity-50 pointer-events-none' : ''}`}>
                                 <input type="file" className="hidden" onChange={handleFileUpload} accept=".pdf,.docx,.pptx,.txt" />
-                                <Upload size={20} />
-                                Upload Files
+                                {status === 'processing' ? <Loader2 size={20} className="animate-spin" /> : <Upload size={20} />}
+                                {status === 'processing' ? 'Analyzing...' : 'Upload Files'}
                             </label>
 
                             <div className="mt-6 flex flex-wrap justify-center gap-2">
@@ -220,20 +259,33 @@ export default function LearningAssistant() {
                         </div>
 
                         <div className="flex-1">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <Flashcard
-                                    question="What is the primary function of Reactive Streams?"
-                                    answer="To provide a standard for asynchronous stream processing with non-blocking back pressure."
-                                />
-                                <Flashcard
-                                    question="Explain the 'Event Loop' in Node.js."
-                                    answer="A single-threaded mechanism that handles multiple concurrent operations by delegating I/O to the system kernel."
-                                />
-                                <Flashcard
-                                    question="Define 'Ghostwriting' in this context."
-                                    answer="The process of autonomous agents decompiling noise into high-fidelity knowledge blocks."
-                                />
-                            </div>
+                            {status === 'done' ? (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="grid grid-cols-1 md:grid-cols-3 gap-6"
+                                >
+                                    {results.length > 0 ? results.map((item, i) => (
+                                        <Flashcard
+                                            key={i}
+                                            question={item.question}
+                                            answer={item.reason}
+                                        />
+                                    )) : (
+                                        <div className="col-span-full py-12 text-center text-slate-500 font-bold uppercase tracking-widest opacity-50">
+                                            No intelligence signals detected
+                                        </div>
+                                    )}
+                                </motion.div>
+                            ) : (
+                                <div className="h-64 flex flex-col items-center justify-center text-center space-y-4 opacity-30 border-2 border-dashed border-white/5 rounded-[30px]">
+                                    <Zap size={40} className="text-slate-500" />
+                                    <div className="space-y-1">
+                                        <p className="text-xs font-black uppercase tracking-widest text-slate-500">Awaiting Distillation</p>
+                                        <p className="text-[10px] text-slate-600 font-bold">Upload materials to generate exam intelligence</p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </BentoCard>

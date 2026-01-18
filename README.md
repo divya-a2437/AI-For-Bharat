@@ -67,7 +67,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## 📂 Project Structure
 
-- `app/learning-assistant/`: Custom study extraction engine.
+- `app/workflow-assistant/`: Custom study extraction engine.
 - `app/predictor/`: AI-powered exam probability analysis.
 - `app/api/predict/`: Technical literacy agent API.
 - `src/components/`: Modular UI components (Mermaid Diagrams, Bento Cards, Flashcards, etc.).
