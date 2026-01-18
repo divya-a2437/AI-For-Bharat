@@ -1,0 +1,5 @@
+jax
+jaxlib
+keras
+huggingface_hub
+tensorflow-cpu # Optional, but often needed for some keras utilities

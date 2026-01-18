@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { Buffer } from "buffer";
 
+// Neural Engine Integration: burrito-x (JAX Backend)
+// Fallback logic for scripts/neural_engine.py is initialized below
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: NextRequest) {
