@@ -8,8 +8,8 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: NextRequest) {
     try {
-        const data = await req.formData();
-        const file = data.get("file") as File | null;
+        const formData = await req.formData();
+        const file = formData.get("file") as File | null;
 
         if (!file) return NextResponse.json({ error: "No file provided" }, { status: 400 });
 
@@ -19,47 +19,77 @@ export async function POST(req: NextRequest) {
         const rawText = buffer.toString('utf-8').slice(0, 4000); // Limit context for API
 
         const prompt = `
-  You are a Technical Literacy Agent. Analyze the uploaded documentation/codebase.
-  1. Identify the 'Core Logic' (The 30% signal that explains the 70% noise).
-  2. Break down the content into predictions, a technical matrix, a Mermaid.js logic flow, vault blocks, a dependency matrix, and a technical gap analysis.
+  You are the Ghostwriter Hackathon Engine. Purpose: Win the competition by performing extreme technical distillation on the provided context.
   
-  For 'vaultBlocks', automatically sort information into these three buckets:
-  - Syntax: Essential code snippets and API definitions.
-  - Logic: The "why" behind the implementation patterns.
-  - Architecture: High-level system design and dependency relationships.
+  1. SIGNAL EXTRACTION (30% vs 70%): Identify the core technical alpha that drives the majority of project value.
+  2. BATTLE PLAN: Map out a high-speed execution path with strategic priorities and architectural flows.
+  3. COMPETITIVE EDGE: Identify critical technical gaps and provide 'bridgeAction' tasks to ensure a flawless demo.
 
-  For 'dependencyMatrix', detect libraries/frameworks (e.g., Next.js, OpenAI, Tailwind) and flag their 'impact' (High Impact | Low Impact) and 'role' in the project.
-
-  For 'gapAnalysis', compare the core logic/tech stack found in the text against industry standards. Identify:
-  - 'gap': The missing concept or skill.
-  - 'vulnerability': Why this gap is critical for this specific project.
-  - 'bridgeAction': A specific simulated task or mock question to close the gap.
+  IMPORTANT: To save tokens and optimize for high-frequency processing, return a JSON object with compact CSV strings (DELIMITER: '|'). DO NOT include headers.
 
   JSON structure:
   {
-    "predictions": [ { "question": "string", "confidence": number, "reason": "string" } ],
-    "technicalMatrix": [ { "concept": "string", "difficulty": "string", "priority": "string", "prob": number } ],
-    "mermaidChart": "string (Valid Mermaid.js 'graph TD' syntax representing the logic flow)",
-    "vaultBlocks": [ { "title": "string", "content": "string", "category": "syntax" | "logic" | "architecture", "tags": ["string"] } ],
-    "dependencyMatrix": [ { "library": "string", "impact": "High Impact" | "Low Impact", "role": "string", "version": "string | unknown" } ],
-    "gapAnalysis": [ { "gap": "string", "vulnerability": "string", "bridgeAction": "string", "type": "lesson" | "mock" } ]
+    "predictions": "priority_task|confidence_score|strategic_impact",
+    "technicalMatrix": "concept|difficulty|hackathon_priority|prob",
+    "mermaidChart": "string (Valid Mermaid.js 'graph TD' syntax for the optimized winning architecture)",
+    "vaultBlocks": "title|content|category(Syntax|Logic|Architecture)|tags",
+    "dependencyMatrix": "library|strategic_value|role|version",
+    "gapAnalysis": "gap|risk_to_demo|bridgeAction|type(lesson|mock)",
+    "distillation": "# Winning Hackathon Strategy\n\n[Markdown summary of the tech alpha, MVP core, and execution roadmap. Use bolding and high-impact terminology.]"
   }
 
   Context: "${rawText}"
 `;
 
         const response = await openai.chat.completions.create({
-            model: "gpt-4o",
+            model: "gpt-4o-mini",
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" },
+            max_tokens: 2048,
         });
 
-        const content = response.choices[0].message.content;
-        if (!content) {
-            throw new Error("No content generated");
-        }
+        const rawContent = response.choices[0].message.content;
+        if (!rawContent) throw new Error("No content generated");
 
-        return NextResponse.json(JSON.parse(content));
+        const data = JSON.parse(rawContent);
+
+        /**
+         * Compact "CSV-within-JSON" structure requested from AI:
+         * {
+         *   "predictions": "question|confidence|reason",
+         *   "technicalMatrix": "concept|difficulty|priority|prob",
+         *   "vaultBlocks": "title|content|category|tags(comma-separated)",
+         *   "distillation": "markdown..."
+         * }
+         */
+
+        // Helper to parse CSV strings back to Objects
+        const parseCSV = (csv: string, keys: string[]) => {
+            if (!csv) return [];
+            return csv.split('\n').filter(line => line.trim()).map(line => {
+                const values = line.split('|');
+                const obj: any = {};
+                keys.forEach((key, i) => {
+                    let val = values[i]?.trim();
+                    if (key === 'confidence' || key === 'prob') obj[key] = parseFloat(val) || 0;
+                    else if (key === 'tags') obj[key] = val ? val.split(',').map(t => t.trim()) : [];
+                    else obj[key] = val || "";
+                });
+                return obj;
+            });
+        };
+
+        const finalized = {
+            predictions: parseCSV(data.predictions, ['question', 'confidence', 'reason']),
+            technicalMatrix: parseCSV(data.technicalMatrix, ['concept', 'difficulty', 'priority', 'prob']),
+            mermaidChart: data.mermaidChart,
+            vaultBlocks: parseCSV(data.vaultBlocks, ['title', 'content', 'category', 'tags']),
+            dependencyMatrix: parseCSV(data.dependencyMatrix, ['library', 'impact', 'role', 'version']),
+            gapAnalysis: parseCSV(data.gapAnalysis, ['gap', 'vulnerability', 'bridgeAction', 'type']),
+            distillation: data.distillation
+        };
+
+        return NextResponse.json(finalized);
     } catch (error) {
         console.error("Prediction error:", error);
         return NextResponse.json({ error: "Prediction Engine Failed" }, { status: 500 });

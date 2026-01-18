@@ -6,7 +6,7 @@ import {
     Box, Database, Code, Zap, Layers,
     Search, Filter, Plus, ChevronRight,
     ArrowUpRight, Clock, Shield, Sparkles,
-    Code2, Brain, Cpu
+    Code2, Brain, Cpu, Terminal
 } from 'lucide-react';
 import BentoCard from "@/components/BentoCard";
 
@@ -67,33 +67,41 @@ export default function AtomicVault() {
     ];
 
     return (
-        <div className="max-w-7xl mx-auto px-6 py-12 space-y-12">
+        <div className="max-w-7xl mx-auto px-6 py-12 space-y-12 relative overflow-hidden">
+            {/* Neural Background Layer */}
+            <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
+                <div className="absolute top-[-10%] right-[-10%] w-[45%] h-[45%] bg-blue-600/10 blur-[130px] rounded-full animate-pulse" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[35%] h-[35%] bg-emerald-600/10 blur-[110px] rounded-full animate-pulse [animation-delay:3s]" />
+                <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat" />
+            </div>
+
             {/* Header Section */}
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-12">
-                <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                        <div className="p-3 bg-blue-600 rounded-2xl shadow-[0_0_20px_rgba(37,99,235,0.3)]">
-                            <Box size={24} className="text-white" />
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 border-b border-white/5 pb-16">
+                <div className="space-y-6">
+                    <div className="flex items-center gap-4">
+                        <div className="p-4 bg-blue-600 rounded-3xl shadow-[0_0_30px_rgba(37,99,235,0.4)] relative">
+                            <div className="absolute inset-0 bg-white/20 rounded-3xl animate-ping opacity-20" />
+                            <Box size={28} className="text-white relative z-10" />
                         </div>
-                        <h1 className="text-4xl font-black text-white uppercase italic tracking-tighter">The Atomic Vault</h1>
+                        <h1 className="text-5xl font-black text-white uppercase italic tracking-tighter leading-none">The Atomic Vault</h1>
                     </div>
-                    <p className="text-slate-400 max-w-lg font-medium">
-                        Modular knowledge blocks automatically indexed by neural extraction. Your "Zero-Click" repository for technical intelligence.
+                    <p className="text-slate-400 max-w-lg font-medium leading-relaxed">
+                        Modular knowledge blocks automatically indexed by neural extraction. Your <span className="text-blue-400 font-bold">Zero-Click repository</span> for technical intelligence.
                     </p>
                 </div>
 
-                <div className="flex gap-4 p-2 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl">
+                <div className="flex gap-4 p-3 bg-black/40 rounded-[2.5rem] border border-white/10 backdrop-blur-2xl shadow-2xl">
                     <button
                         onClick={() => setActiveFilter('all')}
-                        className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeFilter === 'all' ? 'bg-white text-black' : 'text-slate-400 hover:text-white'}`}
+                        className={`px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] transition-all ${activeFilter === 'all' ? 'bg-white text-black' : 'text-slate-500 hover:text-white'}`}
                     >
-                        All Blocks
+                        Index All
                     </button>
                     {categories.map(cat => (
                         <button
                             key={cat.id}
                             onClick={() => setActiveFilter(cat.id as any)}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeFilter === cat.id ? 'bg-white text-black' : 'text-slate-400 hover:text-white'}`}
+                            className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] transition-all ${activeFilter === cat.id ? 'bg-white text-black shadow-lg shadow-white/5' : 'text-slate-500 hover:text-white'}`}
                         >
                             {cat.icon}
                             {cat.label}
@@ -104,26 +112,28 @@ export default function AtomicVault() {
 
             {/* Neural Index Notification */}
             <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-4 bg-violet-500/5 border border-violet-500/20 rounded-2xl flex items-center justify-between group cursor-pointer hover:bg-violet-500/10 transition-all"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.005 }}
+                className="p-6 bg-violet-600/10 border border-violet-500/20 rounded-3xl flex items-center justify-between group cursor-pointer hover:bg-violet-600/15 transition-all shadow-[0_15px_30px_-10px_rgba(124,58,237,0.2)]"
             >
-                <div className="flex items-center gap-4">
-                    <div className="p-2 bg-violet-500/20 rounded-xl text-violet-400 animate-pulse">
-                        <Sparkles size={18} />
+                <div className="flex items-center gap-6">
+                    <div className="p-3 bg-violet-500/20 rounded-2xl text-violet-400 relative">
+                        <Sparkles size={20} className="animate-pulse" />
+                        <div className="absolute inset-0 bg-violet-400/20 rounded-2xl blur-md" />
                     </div>
                     <div>
-                        <p className="text-xs font-bold text-white">Neural Index Active</p>
-                        <p className="text-[10px] text-slate-500 font-medium">Ghostwriter is automatically sorting your uploads into buckets.</p>
+                        <p className="text-sm font-black text-white uppercase tracking-tight">Autonomous Neural Indexing Active</p>
+                        <p className="text-xs text-slate-500 font-medium italic">Ghostwriter is mapping 42 new extraction branches from your recent uploads.</p>
                     </div>
                 </div>
-                <div className="flex items-center gap-2 text-[10px] font-black text-violet-400 uppercase tracking-widest group-hover:translate-x-1 transition-transform">
-                    View Logs <ChevronRight size={14} />
+                <div className="flex items-center gap-3 text-[10px] font-black text-violet-400 uppercase tracking-[0.2em] group-hover:translate-x-2 transition-transform bg-violet-500/10 px-4 py-2 rounded-xl">
+                    Neural Logs <ChevronRight size={14} />
                 </div>
             </motion.div>
 
             {/* Main Content Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32">
                 <AnimatePresence mode="popLayout">
                     {filteredBlocks.map((block, index) => {
                         const catInfo = categories.find(c => c.id === block.category) || categories[0];
@@ -131,50 +141,66 @@ export default function AtomicVault() {
                             <motion.div
                                 key={block.id}
                                 layout
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.9 }}
-                                transition={{ delay: index * 0.05 }}
-                                className="group relative"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                transition={{ delay: index * 0.05, type: 'spring', damping: 20 }}
+                                className="group relative h-full"
                             >
-                                <div className="absolute -inset-1 bg-gradient-to-r from-violet-600/20 to-blue-600/20 rounded-[2.5rem] blur opacity-0 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
-                                <div className="relative p-8 rounded-[2.3rem] bg-[#0a0a0a] border border-white/5 space-y-6 flex flex-col h-full hover:border-white/10 transition-all">
-                                    <div className="flex items-start justify-between">
-                                        <div className={`p-2.5 rounded-xl ${catInfo.bg} ${catInfo.color} border ${catInfo.border}`}>
-                                            {catInfo.icon}
-                                        </div>
-                                        <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">{block.timestamp}</span>
+                                <div className={`absolute -inset-1.5 bg-gradient-to-br ${block.category === 'syntax' ? 'from-blue-600/30 to-violet-600/30' : block.category === 'logic' ? 'from-amber-600/30 to-orange-600/30' : 'from-emerald-600/30 to-cyan-600/30'} rounded-[2.8rem] blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700`} />
+                                <div className="relative p-10 rounded-[2.5rem] bg-[#0a0a0a] border border-white/5 space-y-8 flex flex-col h-full hover:border-white/20 transition-all shadow-2xl overflow-hidden">
+                                    {/* Background Icon Watermark */}
+                                    <div className="absolute top-[-10%] right-[-10%] opacity-[0.02] group-hover:opacity-[0.05] transition-opacity pointer-events-none scale-[2]">
+                                        {catInfo.icon}
                                     </div>
 
-                                    <div className="space-y-2 flex-1">
-                                        <h3 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">{block.title}</h3>
+                                    <div className="flex items-start justify-between relative z-10">
+                                        <div className={`p-4 rounded-2xl ${catInfo.bg} ${catInfo.color} border-2 ${catInfo.border} shadow-inner`}>
+                                            {catInfo.icon}
+                                        </div>
+                                        <div className="flex flex-col items-end">
+                                            <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">{block.timestamp}</span>
+                                            <span className={`text-[8px] font-black uppercase tracking-widest mt-1 ${catInfo.color}`}>Verified</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4 flex-1 relative z-10">
+                                        <h3 className="text-xl font-black text-white group-hover:text-blue-400 transition-colors uppercase italic tracking-tight leading-tight">{block.title}</h3>
                                         <div className="relative">
                                             {block.category === 'syntax' ? (
-                                                <div className="p-4 bg-black/40 rounded-xl border border-white/5 font-mono text-[11px] text-slate-400 leading-relaxed overflow-x-auto custom-scrollbar">
+                                                <div className="p-6 bg-black/60 rounded-3xl border border-white/5 font-mono text-[11px] text-slate-400 leading-relaxed overflow-x-auto custom-scrollbar shadow-inner group-hover:border-blue-500/20 transition-colors">
+                                                    <div className="flex gap-1.5 mb-4 opacity-30">
+                                                        <div className="w-2 h-2 rounded-full bg-rose-500" />
+                                                        <div className="w-2 h-2 rounded-full bg-amber-500" />
+                                                        <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                                                    </div>
                                                     {block.content}
                                                 </div>
                                             ) : (
-                                                <p className="text-sm text-slate-400 leading-relaxed font-medium">
+                                                <p className="text-sm text-slate-400 leading-relaxed font-medium italic border-l-2 border-white/5 pl-5 group-hover:border-amber-500/40 transition-colors">
                                                     {block.content}
                                                 </p>
                                             )}
                                         </div>
                                     </div>
 
-                                    <div className="pt-4 flex flex-wrap gap-2">
+                                    <div className="pt-6 flex flex-wrap gap-2 relative z-10">
                                         {block.tags.map(tag => (
-                                            <span key={tag} className="px-2 py-0.5 rounded-md bg-white/5 text-slate-500 text-[9px] font-black uppercase tracking-tighter border border-white/10">
+                                            <span key={tag} className="px-3 py-1 rounded-xl bg-white/[0.03] text-slate-500 text-[10px] font-black uppercase tracking-tighter border border-white/5 hover:bg-white/10 hover:text-white transition-all cursor-default">
                                                 #{tag}
                                             </span>
                                         ))}
                                     </div>
 
-                                    <div className="pt-6 border-t border-white/5 flex items-center justify-between">
-                                        <span className={`text-[9px] font-black uppercase tracking-widest ${catInfo.color}`}>
-                                            {catInfo.label} Block
-                                        </span>
-                                        <button className="p-2 text-slate-500 hover:text-white transition-colors">
-                                            <ArrowUpRight size={14} />
+                                    <div className="pt-8 border-t border-white/5 flex items-center justify-between relative z-10 mt-auto">
+                                        <div className="flex items-center gap-2">
+                                            <div className={`w-1.5 h-1.5 rounded-full ${catInfo.color.replace('text', 'bg')} animate-pulse`} />
+                                            <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${catInfo.color}`}>
+                                                {catInfo.label} Node
+                                            </span>
+                                        </div>
+                                        <button className="p-3 bg-white/5 rounded-2xl text-slate-500 hover:text-white hover:bg-white/10 transition-all hover:translate-y-[-2px] hover:translate-x-[2px]">
+                                            <ArrowUpRight size={18} />
                                         </button>
                                     </div>
                                 </div>
@@ -184,13 +210,14 @@ export default function AtomicVault() {
                 </AnimatePresence>
 
                 {/* Create New Block Placeholder */}
-                <button className="group relative border-2 border-dashed border-white/5 rounded-[2.3rem] p-8 flex flex-col items-center justify-center gap-4 hover:border-violet-500/40 hover:bg-violet-500/[0.02] transition-all min-h-[300px]">
-                    <div className="p-4 bg-white/5 rounded-2xl group-hover:scale-110 group-hover:bg-violet-500/10 transition-all text-slate-500 group-hover:text-violet-400">
-                        <Plus size={24} />
+                <button className="group relative border-2 border-dashed border-white/10 rounded-[2.5rem] p-12 flex flex-col items-center justify-center gap-6 hover:border-blue-500/40 hover:bg-blue-500/[0.03] transition-all min-h-[400px] overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="p-6 bg-white/5 rounded-3xl group-hover:scale-110 group-hover:bg-blue-500/20 group-hover:rotate-12 transition-all text-slate-600 group-hover:text-blue-400 relative z-10">
+                        <Plus size={32} />
                     </div>
-                    <div className="text-center">
-                        <p className="text-sm font-bold text-slate-400 group-hover:text-white">New Neural Block</p>
-                        <p className="text-[10px] text-slate-600 font-medium uppercase tracking-widest group-hover:text-slate-500">Manual Entry</p>
+                    <div className="text-center relative z-10">
+                        <p className="text-lg font-black text-slate-400 group-hover:text-white uppercase italic tracking-tighter">Initialize Neural Block</p>
+                        <p className="text-[10px] text-slate-600 font-bold uppercase tracking-[0.3em] mt-2">Manual Signal Bridge</p>
                     </div>
                 </button>
             </div>

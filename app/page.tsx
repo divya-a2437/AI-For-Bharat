@@ -15,6 +15,8 @@ import NeuralNetwork from "@/components/NeuralNetwork";
 import FocusTimer from "@/components/FocusTimer";
 import GhostChat from "@/components/GhostChat";
 import AgentRow from "@/components/AgentRow";
+import StudyTip from "@/components/StudyTip";
+import QuickLesson from "@/components/QuickLesson";
 import { Brain, Mic, Layers, Ghost, Loader2, BookOpen, FileText, Music, Video, CheckCircle2, FileDown, Share2, Zap, ExternalLink, Target, Cpu } from "lucide-react";
 
 type AgentState = "idle" | "processing" | "done";
@@ -31,6 +33,7 @@ export default function Home() {
   const [currentFile, setCurrentFile] = useState<File | null>(null);
   const [ghostwriterOutput, setGhostwriterOutput] = useState<string>("");
   const [flashcards, setFlashcards] = useState<{ question: string; answer: string }[]>([]);
+  const [showLesson, setShowLesson] = useState(false);
   const [mounted, setMounted] = useState(false);
   const magneticRef = useRef<HTMLSpanElement>(null);
 
@@ -283,21 +286,19 @@ export default function Home() {
             </div>
           </BentoCard>
 
-          {/* 3. THE TECH ANGLE (Bento/Decompiler) */}
+          {/* 3. THE TECH ANGLE (Bento/Decompiler) & STUDY TIP */}
           <BentoCard
             title="Knowledge Decompiler"
             subtitle="Technical Literacy"
-            className="md:col-span-12 border-blue-500/20"
+            className="md:col-span-8 border-blue-500/20"
           >
-            <div className="flex flex-col md:flex-row gap-8 items-center">
-              <div className="flex-1">
-                <p className="text-sm text-slate-400 leading-relaxed mb-4">
-                  Documentation is dense. We break complex technical hierarchies into atomic
-                  <span className="text-blue-400 font-bold"> Knowledge Blocks</span>.
-                </p>
-              </div>
+            <div className="flex flex-col gap-8">
+              <p className="text-sm text-slate-400 leading-relaxed">
+                Documentation is dense. We break complex technical hierarchies into atomic
+                <span className="text-blue-400 font-bold"> Knowledge Blocks</span>.
+              </p>
               {/* Visual Proof: The "Block" representation */}
-              <div className="flex-1 grid grid-cols-2 gap-2 opacity-80">
+              <div className="grid grid-cols-2 gap-2 opacity-80">
                 <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg text-center">
                   <span className="text-[10px] font-bold text-blue-300">SYNTAX</span>
                 </div>
@@ -310,10 +311,20 @@ export default function Home() {
               </div>
             </div>
           </BentoCard>
+
+          <div className="md:col-span-4">
+            <StudyTip onOpenLesson={() => setShowLesson(true)} />
+          </div>
         </div>
 
         <SystemStatus />
       </div>
+
+      <QuickLesson
+        isOpen={showLesson}
+        onClose={() => setShowLesson(false)}
+        topic="Distributed State Management"
+      />
     </div>
   );
 }

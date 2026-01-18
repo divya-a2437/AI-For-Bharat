@@ -11,12 +11,14 @@ import {
 import BentoCard from "@/components/BentoCard";
 import AgentRow from "@/components/AgentRow";
 import Flashcard from "@/components/Flashcard";
+import ReactMarkdown from "react-markdown";
 
 export default function WorkflowAssistant() {
     const [currentTime, setCurrentTime] = useState("");
     const [file, setFile] = useState<File | null>(null);
     const [status, setStatus] = useState<"idle" | "processing" | "done">("idle");
     const [results, setResults] = useState<{ question: string; reason: string }[]>([]);
+    const [distillation, setDistillation] = useState<string>("");
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -29,6 +31,7 @@ export default function WorkflowAssistant() {
     const handleProcess = async (targetFile: File) => {
         try {
             setStatus("processing");
+            setDistillation("");
             const formData = new FormData();
             formData.append("file", targetFile);
 
@@ -41,6 +44,7 @@ export default function WorkflowAssistant() {
 
             const data = await res.json();
             setResults(data.predictions || []);
+            setDistillation(data.distillation || "");
             setStatus("done");
         } catch (error) {
             console.error("AI Distillation failed:", error);
@@ -57,36 +61,40 @@ export default function WorkflowAssistant() {
     }, []);
 
     return (
-        <div className="min-h-screen text-white bg-transparent p-8 md:p-12 selection:bg-violet-500/30">
+        <div className="max-w-7xl mx-auto px-6 py-12 space-y-12 pb-32 relative overflow-hidden">
+            {/* Neural Background Layer */}
+            <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
+                <div className="absolute top-[-10%] right-[-10%] w-[45%] h-[45%] bg-violet-600/10 blur-[130px] rounded-full animate-pulse" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[35%] h-[35%] bg-blue-600/10 blur-[110px] rounded-full animate-pulse [animation-delay:3s]" />
+                <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat" />
+            </div>
+
             {/* Header Section */}
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-8">
-                <div className="space-y-4">
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 border-b border-white/5 pb-16">
+                <div className="space-y-6">
                     <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 bg-violet-600 rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(139,92,246,0.5)]">
-                            <Ghost className="w-10 h-10 text-white" />
+                        <div className="p-4 bg-violet-600 rounded-3xl shadow-[0_0_30px_rgba(139,92,246,0.4)] relative">
+                            <div className="absolute inset-0 bg-white/20 rounded-3xl animate-ping opacity-20" />
+                            <Ghost size={28} className="text-white relative z-10" />
                         </div>
-                        <h1 className="text-5xl font-black tracking-tighter text-white uppercase italic">Ghostwriter</h1>
+                        <h1 className="text-5xl font-black text-white uppercase italic tracking-tighter leading-none">Workflow Assistant</h1>
                     </div>
-                    <p className="text-slate-400 max-w-md font-medium leading-relaxed">
-                        High-fidelity study extraction engine. Distilling lecture noise into exam-day clarity.
+                    <p className="text-slate-400 max-w-lg font-medium leading-relaxed">
+                        High-fidelity study extraction engine. Ghostwriter <span className="text-violet-400 font-bold">distills lecture noise</span> into exam-day clarity.
                     </p>
                 </div>
 
-                <div className="flex items-center gap-8 bg-white/5 backdrop-blur-xl p-4 rounded-2xl border border-white/10">
-                    <div className="p-2 bg-white/5 rounded-xl text-slate-400">
-                        <Ghost size={20} />
-                    </div>
-                    <div className="flex flex-col">
-                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Global Latency</p>
+                <div className="flex gap-4 p-4 bg-black/40 rounded-[2.5rem] border border-white/10 backdrop-blur-2xl shadow-2xl">
+                    <div className="px-6 border-r border-white/10 flex flex-col">
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1">Global Latency</span>
                         <div className="flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                            <span className="text-sm font-black text-emerald-400 font-mono">52ms</span>
+                            <span className="text-xl font-black text-emerald-400 font-mono italic tracking-tighter">52ms</span>
                         </div>
                     </div>
-                    <div className="h-8 w-[1px] bg-white/10" />
-                    <div className="flex flex-col px-4 text-right">
-                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Neural Sync</p>
-                        <p className="text-sm font-black text-violet-400 font-mono">{currentTime || "12:19:27"}</p>
+                    <div className="px-6 flex flex-col">
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1">Neural Sync</span>
+                        <span className="text-xl font-black text-violet-400 font-mono italic tracking-tighter">{currentTime || "12:19:27"}</span>
                     </div>
                 </div>
             </header>
@@ -263,19 +271,45 @@ export default function WorkflowAssistant() {
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="grid grid-cols-1 md:grid-cols-3 gap-6"
+                                    className="space-y-12"
                                 >
-                                    {results.length > 0 ? results.map((item, i) => (
-                                        <Flashcard
-                                            key={i}
-                                            question={item.question}
-                                            answer={item.reason}
-                                        />
-                                    )) : (
-                                        <div className="col-span-full py-12 text-center text-slate-500 font-bold uppercase tracking-widest opacity-50">
-                                            No intelligence signals detected
+                                    {/* AI Distillation Text Section */}
+                                    {distillation && (
+                                        <div className="p-10 rounded-[2.5rem] bg-white/[0.02] border border-white/5 shadow-inner">
+                                            <div className="flex items-center gap-3 mb-8">
+                                                <Sparkles className="text-violet-400" size={18} />
+                                                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Logic Distillation</h4>
+                                            </div>
+                                            <div className="prose prose-invert max-w-none 
+                                                prose-p:text-slate-300 prose-p:leading-relaxed prose-p:font-medium
+                                                prose-strong:text-white prose-strong:font-black
+                                                prose-headings:text-white prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tighter
+                                                prose-ul:list-disc prose-ul:pl-6 prose-li:text-slate-400 prose-li:mb-2 italic">
+                                                <ReactMarkdown>{distillation}</ReactMarkdown>
+                                            </div>
                                         </div>
                                     )}
+
+                                    {/* Flashcards Section */}
+                                    <div className="space-y-8">
+                                        <div className="flex items-center gap-3 px-4">
+                                            <Target className="text-emerald-400" size={18} />
+                                            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Intelligence Nodes (Flashcards)</h4>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            {results.length > 0 ? results.map((item, i) => (
+                                                <Flashcard
+                                                    key={i}
+                                                    question={item.question}
+                                                    answer={item.reason}
+                                                />
+                                            )) : (
+                                                <div className="col-span-full py-12 text-center text-slate-500 font-bold uppercase tracking-widest opacity-50">
+                                                    No intelligence signals detected
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
                                 </motion.div>
                             ) : (
                                 <div className="h-64 flex flex-col items-center justify-center text-center space-y-4 opacity-30 border-2 border-dashed border-white/5 rounded-[30px]">
