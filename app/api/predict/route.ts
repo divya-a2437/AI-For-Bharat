@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
         const prompt = `
   You are a Technical Literacy Agent. Analyze the uploaded documentation/codebase.
   1. Identify the 'Core Logic' (The 30% signal that explains the 70% noise).
-  2. Break down the content into predictions, a technical matrix, a Mermaid.js logic flow, vault blocks, and a dependency matrix.
+  2. Break down the content into predictions, a technical matrix, a Mermaid.js logic flow, vault blocks, a dependency matrix, and a technical gap analysis.
   
   For 'vaultBlocks', automatically sort information into these three buckets:
   - Syntax: Essential code snippets and API definitions.
@@ -28,13 +28,19 @@ export async function POST(req: NextRequest) {
 
   For 'dependencyMatrix', detect libraries/frameworks (e.g., Next.js, OpenAI, Tailwind) and flag their 'impact' (High Impact | Low Impact) and 'role' in the project.
 
+  For 'gapAnalysis', compare the core logic/tech stack found in the text against industry standards. Identify:
+  - 'gap': The missing concept or skill.
+  - 'vulnerability': Why this gap is critical for this specific project.
+  - 'bridgeAction': A specific simulated task or mock question to close the gap.
+
   JSON structure:
   {
     "predictions": [ { "question": "string", "confidence": number, "reason": "string" } ],
     "technicalMatrix": [ { "concept": "string", "difficulty": "string", "priority": "string", "prob": number } ],
     "mermaidChart": "string (Valid Mermaid.js 'graph TD' syntax representing the logic flow)",
     "vaultBlocks": [ { "title": "string", "content": "string", "category": "syntax" | "logic" | "architecture", "tags": ["string"] } ],
-    "dependencyMatrix": [ { "library": "string", "impact": "High Impact" | "Low Impact", "role": "string", "version": "string | unknown" } ]
+    "dependencyMatrix": [ { "library": "string", "impact": "High Impact" | "Low Impact", "role": "string", "version": "string | unknown" } ],
+    "gapAnalysis": [ { "gap": "string", "vulnerability": "string", "bridgeAction": "string", "type": "lesson" | "mock" } ]
   }
 
   Context: "${rawText}"
