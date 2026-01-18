@@ -150,16 +150,7 @@ export default function DependencyMatrix() {
                         </div>
                     </BentoCard>
 
-                    {/* Quick Insight */}
-                    <div className="p-8 rounded-[2.5rem] bg-violet-500/5 border border-violet-500/20 space-y-4">
-                        <div className="flex items-center gap-3">
-                            <Activity className="text-violet-400" size={20} />
-                            <h3 className="text-sm font-black text-white uppercase tracking-widest">Impact Signal</h3>
-                        </div>
-                        <p className="text-xs text-slate-400 leading-relaxed font-medium">
-                            Ghostwriter detected <span className="text-white font-bold">{status === 'done' ? dependencies.filter(d => d.impact === 'High Impact').length : '3'} Architecturally Sensitive</span> libraries. Changes to these packages carry high implementation risk.
-                        </p>
-                    </div>
+
                 </div>
 
                 {/* Right Side: Detailed Matrix */}
