@@ -1,17 +1,33 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
     LayoutDashboard, Target, BookOpen, Settings, ChevronLeft, ChevronRight,
-    Menu, Brain, Terminal, Workflow, Box, Database, Zap
+    Menu, Brain, Terminal, Workflow, Box, Database, Zap, Activity, Cpu
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Sidebar() {
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [logIndex, setLogIndex] = useState(0);
     const pathname = usePathname();
+
+    const logs = [
+        { agent: 'Archivist', text: 'Indexing React Hooks hierarchy...', color: 'text-emerald-400' },
+        { agent: 'Decompiler', text: 'Mapping data flow in AuthService.ts...', color: 'text-violet-400' },
+        { agent: 'Analyst', text: 'Identifying high-probability signals...', color: 'text-amber-400' },
+        { agent: 'System', text: 'Neural entropy stabilization active.', color: 'text-blue-400' },
+        { agent: 'Archivist', text: 'Caching technical dependencies...', color: 'text-emerald-400' },
+    ];
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setLogIndex((prev) => (prev + 1) % logs.length);
+        }, 4000);
+        return () => clearInterval(interval);
+    }, [logs.length]);
 
     const sections = [
         {
@@ -145,20 +161,44 @@ export default function Sidebar() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 10 }}
-                            className="p-4 bg-violet-950/20 rounded-2xl border border-violet-500/20 mb-6"
+                            className="p-4 bg-white/[0.02] rounded-2xl border border-white/5 mb-6 overflow-hidden relative"
                         >
-                            <p className="text-[9px] font-bold text-violet-400 uppercase mb-3 tracking-widest">System Intelligence</p>
-                            <div className="space-y-3">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-[10px] text-slate-300 font-medium">The Archivist</span>
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                                        <span className="text-[8px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-black">INDEXING</span>
-                                    </div>
+                            <div className="flex items-center justify-between mb-3">
+                                <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Neural Stream</p>
+                                <div className="flex items-center gap-1.5">
+                                    <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+                                    <span className="text-[8px] font-black text-emerald-500 uppercase">Live</span>
                                 </div>
-                                <div className="flex items-center justify-between opacity-50">
-                                    <span className="text-[10px] text-slate-300 font-medium">The Explainer</span>
-                                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-slate-500/10 text-slate-400 border border-slate-500/20 font-black">IDLE</span>
+                            </div>
+
+                            <div className="h-12 relative">
+                                <AnimatePresence mode="wait">
+                                    <motion.div
+                                        key={logIndex}
+                                        initial={{ opacity: 0, x: 10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -10 }}
+                                        className="absolute inset-0 flex flex-col justify-center"
+                                    >
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <span className={`text-[10px] font-black uppercase tracking-tighter ${logs[logIndex].color}`}>
+                                                [{logs[logIndex].agent}]
+                                            </span>
+                                            <div className="flex-1 h-[1px] bg-white/5" />
+                                        </div>
+                                        <p className="text-[10px] text-slate-300 font-medium leading-tight line-clamp-2 italic">
+                                            {logs[logIndex].text}
+                                        </p>
+                                    </motion.div>
+                                </AnimatePresence>
+                            </div>
+
+                            <div className="mt-4 flex items-center justify-between opacity-30">
+                                <Terminal size={10} className="text-slate-500" />
+                                <div className="flex gap-1">
+                                    {[1, 2, 3].map(i => (
+                                        <div key={i} className={`w-1 h-1 rounded-full bg-slate-500 ${i === (logIndex % 3) + 1 ? 'animate-bounce' : ''}`} />
+                                    ))}
                                 </div>
                             </div>
                         </motion.div>
