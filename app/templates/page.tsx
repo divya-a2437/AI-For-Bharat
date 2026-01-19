@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FileText, Plus, Search, Copy, Star, Clock, ChevronRight, BookOpen, Target, Brain, Code } from 'lucide-react';
 
@@ -70,7 +71,15 @@ export default function TemplatesPage() {
                                     <span className={`px-2 py-1 rounded-lg ${colors.bg} ${colors.text} text-[9px] font-black uppercase`}>{template.category}</span>
                                     <span className="text-[10px] text-slate-600 font-bold">{template.uses} uses</span>
                                 </div>
-                                <button className="flex items-center gap-1 px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all"><Copy size={12} />Use</button>
+                                {template.id === '2' ? (
+                                    <Link href="/study-plan" className="flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-xs font-bold text-white transition-all shadow-lg shadow-emerald-900/40">
+                                        <Plus size={12} />Use
+                                    </Link>
+                                ) : (
+                                    <button className="flex items-center gap-1 px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all">
+                                        <Copy size={12} />Use
+                                    </button>
+                                )}
                             </div>
                         </motion.div>
                     );

@@ -37,6 +37,7 @@ export default function Sidebar() {
                 { name: 'Overview', icon: <LayoutDashboard size={20} />, href: '/', subLabel: 'Main dashboard' },
                 { name: 'Workflow Assistant', icon: <Brain size={20} />, href: '/workflow-assistant', subLabel: 'Study extraction engine' },
                 { name: 'Exam Predictor', icon: <Target size={20} />, href: '/predictor', subLabel: 'Probability analysis' },
+                { name: 'Exam Study Plan', icon: <Target size={20} />, href: '/study-plan', subLabel: 'Weekly success roadmap' },
             ]
         },
         {
@@ -45,9 +46,8 @@ export default function Sidebar() {
                 { name: 'Quick Notes', icon: <StickyNote size={18} />, href: '/notes', subLabel: 'Capture ideas instantly' },
                 { name: 'Task Board', icon: <FolderKanban size={18} />, href: '/tasks', subLabel: 'Kanban-style workflow' },
                 { name: 'Calendar', icon: <Calendar size={18} />, href: '/calendar', subLabel: 'Schedule & deadlines' },
-                { name: 'Study Plan', icon: <CheckSquare size={18} />, href: '/study-plan', subLabel: 'Exam preparation tracker' },
                 { name: 'Templates', icon: <FileText size={18} />, href: '/templates', subLabel: 'Reusable study formats' },
-                { name: 'Logic Decompiler', icon: <Terminal size={18} />, href: '/decompiler', subLabel: 'Break down complex code' },
+                { name: 'Logic Decompiler', icon: <Terminal size={18} />, href: '/decompiler', subLabel: 'Deconstruct system anatomy' },
             ]
         },
         {

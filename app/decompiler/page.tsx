@@ -80,7 +80,7 @@ export default function DecompilerPage() {
                 <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat" />
             </div>
 
-            {/* Header section with specialized status */}
+            {/* Header section with diagnostic status */}
             <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-12">
                 <div className="space-y-4">
                     <div className="flex items-center gap-3">
@@ -90,30 +90,27 @@ export default function DecompilerPage() {
                         </div>
                         <h1 className="text-5xl font-black text-white uppercase italic tracking-tighter leading-none">Logic Decompiler</h1>
                     </div>
-                    <p className="text-slate-400 max-w-lg font-medium leading-relaxed">
-                        Break down complex codebases into human-readable logic paths. <span className="text-violet-400 font-bold">Eliminate manual tracing</span> and accelerate system understanding.
-                    </p>
                 </div>
 
                 <div className="flex gap-4 p-5 bg-black/40 rounded-[2.5rem] border border-white/10 backdrop-blur-2xl shadow-2xl">
                     <div className="text-right px-6">
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1">Ratio Adjusted</p>
-                        <p className="text-2xl font-black text-emerald-400 font-mono italic tracking-tighter">30:70</p>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1">Deconstruction Ratio</p>
+                        <p className="text-2xl font-black text-emerald-400 font-mono italic tracking-tighter">1:N Pathing</p>
                     </div>
                     <div className="w-[1px] h-12 bg-white/10" />
                     <div className="px-6">
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1">Avg. Coverage</p>
-                        <p className="text-2xl font-black text-violet-400 font-mono italic tracking-tighter">98%</p>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1">Abstraction Layer</p>
+                        <p className="text-2xl font-black text-violet-400 font-mono italic tracking-tighter">Level 4</p>
                     </div>
                 </div>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                {/* Left side: Input Area */}
+                {/* Left side: Technical Ingestion */}
                 <div className="lg:col-span-5 space-y-8">
                     <BentoCard
-                        title="Source Material"
-                        subtitle="TECHNICAL INGESTION STREAM"
+                        title="System Anatomy Ingestion"
+                        subtitle="TECHNICAL DESERIALIZATION STREAM"
                         className="border-white/10 bg-black/20 min-h-[500px] flex flex-col relative overflow-hidden"
                     >
                         <div className="absolute top-0 right-0 p-4">
@@ -129,7 +126,7 @@ export default function DecompilerPage() {
                                 </div>
                                 <textarea
                                     className="relative z-0 w-full h-full min-h-[350px] bg-[#050505] border border-white/10 rounded-3xl p-8 pt-12 text-sm font-mono text-slate-300 focus:outline-none focus:border-violet-500/50 transition-all resize-none custom-scrollbar shadow-inner cursor-text"
-                                    placeholder="// Paste raw source code or technical documentation here..."
+                                    placeholder="// Ingest raw system logic, code snippets, or architecture documentation..."
                                     value={inputCode}
                                     onChange={(e) => setInputCode(e.target.value)}
                                 />
@@ -143,11 +140,11 @@ export default function DecompilerPage() {
                                 {isDecompiling ? (
                                     <>
                                         <Loader2 size={16} className="animate-spin" />
-                                        Synthesizing Logic Tree...
+                                        Mapping Control Flow...
                                     </>
                                 ) : (
                                     <>
-                                        Decompile Logic Path
+                                        Deconstruct System Logic
                                         <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
                                     </>
                                 )}
@@ -162,8 +159,8 @@ export default function DecompilerPage() {
                             </div>
                             <Cpu size={20} className="text-blue-400" />
                             <div>
-                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-loose">Engine State</p>
-                                <p className="text-xl font-black text-white italic">Neural.jax</p>
+                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-loose">Deconstruction Engine</p>
+                                <p className="text-xl font-black text-white italic">LogicCore.v2</p>
                             </div>
                         </div>
                         <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/10 space-y-3 hover:bg-white/[0.04] transition-colors relative overflow-hidden group">
@@ -172,18 +169,18 @@ export default function DecompilerPage() {
                             </div>
                             <Zap size={20} className="text-amber-400" />
                             <div>
-                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-loose">Deep Scan</p>
-                                <p className="text-xl font-black text-white italic">Optimized</p>
+                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-loose">System Hardening</p>
+                                <p className="text-xl font-black text-white italic">Active</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Right side: Output Window */}
+                {/* Right side: Deconstruction Output */}
                 <div className="lg:col-span-7 space-y-6">
                     <BentoCard
-                        title="Decompiler Output"
-                        subtitle="NEURAL LOGIC SYNTHESIS STREAM"
+                        title="Blueprint Deconstruction"
+                        subtitle="NEURAL LOGIC DESERIALIZATION STREAM"
                         className="border-violet-500/10 bg-violet-500/[0.02] h-full relative"
                     >
                         <div className="mt-8 space-y-10">
@@ -193,8 +190,8 @@ export default function DecompilerPage() {
                                         <Cpu size={64} className="text-slate-600 group-hover:text-violet-500 transition-colors" />
                                     </div>
                                     <div className="space-y-2">
-                                        <p className="text-sm uppercase font-black tracking-[0.3em] text-slate-500">Awaiting Technical Ingestion</p>
-                                        <p className="text-[10px] text-slate-600 font-medium uppercase tracking-widest">Feed source code to generate logic path</p>
+                                        <p className="text-sm uppercase font-black tracking-[0.3em] text-slate-500">Awaiting System Ingestion</p>
+                                        <p className="text-[10px] text-slate-600 font-medium uppercase tracking-widest">Feed system anatomy to generate logic blueprint</p>
                                     </div>
                                 </div>
                             ) : isDecompiling ? (
@@ -208,7 +205,7 @@ export default function DecompilerPage() {
                                         <Loader2 size={64} className="text-violet-500 animate-spin relative z-10" />
                                     </div>
                                     <div className="space-y-3 text-center">
-                                        <p className="text-xs uppercase font-black tracking-[0.4em] text-white animate-pulse">Synthesis in Progress</p>
+                                        <p className="text-xs uppercase font-black tracking-[0.4em] text-white animate-pulse">Deserializing Logic Patterns</p>
                                         <div className="flex gap-1 justify-center">
                                             {[0, 1, 2].map(i => (
                                                 <div key={i} className="w-1 h-1 rounded-full bg-violet-500 animate-bounce" style={{ animationDelay: `${i * 0.2}s` }} />
@@ -218,6 +215,13 @@ export default function DecompilerPage() {
                                 </div>
                             ) : (
                                 <div className="space-y-6 pb-12">
+                                    <div className="flex items-center justify-between mb-8 px-4 py-3 bg-white/5 rounded-2xl border border-white/10">
+                                        <div className="flex items-center gap-2">
+                                            <Activity size={14} className="text-emerald-500" />
+                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Control Flow Analysis</span>
+                                        </div>
+                                        <span className="text-[10px] font-mono text-violet-400 font-bold uppercase">Trace Active</span>
+                                    </div>
                                     {logicPath.map((step, index) => (
                                         <motion.div
                                             key={step.id}
@@ -258,7 +262,7 @@ export default function DecompilerPage() {
                                             </div>
 
                                             <div className="absolute top-8 right-8 opacity-0 group-hover:opacity-100 transition-opacity bg-violet-500/10 p-2 rounded-xl">
-                                                <Zap size={14} className="text-violet-400" />
+                                                <Search size={14} className="text-violet-400" />
                                             </div>
                                         </motion.div>
                                     ))}
