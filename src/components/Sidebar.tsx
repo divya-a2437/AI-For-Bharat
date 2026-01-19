@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
     LayoutDashboard, Target, BookOpen, Settings, ChevronLeft, ChevronRight,
-    Menu, Brain, Terminal, Workflow, Box, Database, Zap, Activity, Cpu
+    Menu, Brain, Terminal, Workflow, Box, Database, Zap, Activity, Cpu,
+    StickyNote, Kanban, Calendar, FileText, CheckSquare, FolderKanban
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -41,6 +42,10 @@ export default function Sidebar() {
         {
             title: 'Productivity',
             items: [
+                { name: 'Quick Notes', icon: <StickyNote size={18} />, href: '/notes', subLabel: 'Capture ideas instantly' },
+                { name: 'Task Board', icon: <FolderKanban size={18} />, href: '/tasks', subLabel: 'Kanban-style workflow' },
+                { name: 'Calendar', icon: <Calendar size={18} />, href: '/calendar', subLabel: 'Schedule & deadlines' },
+                { name: 'Templates', icon: <FileText size={18} />, href: '/templates', subLabel: 'Reusable study formats' },
                 { name: 'Logic Decompiler', icon: <Terminal size={18} />, href: '/decompiler', subLabel: 'Break down complex code' },
             ]
         },

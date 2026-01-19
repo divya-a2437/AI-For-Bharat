@@ -16,27 +16,59 @@ interface DecompilerStep {
     type: 'input' | 'process' | 'validation' | 'neural' | 'output';
 }
 
+interface AnalysisResult {
+    summary: string;
+    concepts: string[];
+    improvements: string[];
+    complexity: 'low' | 'medium' | 'high';
+}
+
 export default function DecompilerPage() {
     const [inputCode, setInputCode] = useState("");
     const [isDecompiling, setIsDecompiling] = useState(false);
     const [logicPath, setLogicPath] = useState<DecompilerStep[]>([]);
+    const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleDecompile = () => {
+    const handleDecompile = async () => {
         if (!inputCode.trim()) return;
 
         setIsDecompiling(true);
-        // Simulate AI analysis delay
-        setTimeout(() => {
-            const simulatedPath: DecompilerStep[] = [
-                { id: 1, title: "Input Validation", description: "Analyzing source syntax for structural integrity and identifying entry points.", type: 'validation' },
-                { id: 2, title: "Context Injection", description: "Mapping external dependencies and injecting environmental variables into the logic tree.", type: 'input' },
-                { id: 3, title: "Dependency Extraction", description: "Isolating core libraries and identifying asynchronous I/O bottlenecks.", type: 'process' },
-                { id: 4, title: "Neural Logic Synthesis", description: "Translating raw function calls into abstract step-mapping flows.", type: 'neural' },
-                { id: 5, title: "Logic Flow Output", description: "Generating high-fidelity step list for production-ready documentation.", type: 'output' },
-            ];
-            setLogicPath(simulatedPath);
+        setError(null);
+        setLogicPath([]);
+        setAnalysis(null);
+
+        try {
+            const response = await fetch('/api/decompile', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: inputCode }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Analysis failed');
+            }
+
+            // Add IDs to steps
+            const stepsWithIds = (data.steps || []).map((step: any, index: number) => ({
+                ...step,
+                id: index + 1
+            }));
+
+            setLogicPath(stepsWithIds);
+            setAnalysis({
+                summary: data.summary,
+                concepts: data.concepts || [],
+                improvements: data.improvements || [],
+                complexity: data.complexity || 'medium'
+            });
+        } catch (err: any) {
+            setError(err.message || 'Failed to analyze code');
+        } finally {
             setIsDecompiling(false);
-        }, 2000);
+        }
     };
 
     return (
@@ -89,14 +121,14 @@ export default function DecompilerPage() {
                         </div>
                         <div className="mt-8 flex-1 flex flex-col space-y-6">
                             <div className="relative group flex-1">
-                                <div className="absolute inset-[-1px] bg-gradient-to-br from-violet-600/30 to-blue-600/30 rounded-3xl opacity-0 group-focus-within:opacity-100 transition-opacity blur-sm" />
-                                <div className="absolute top-4 left-4 flex gap-1.5 opacity-30 select-none">
+                                <div className="absolute inset-[-1px] bg-gradient-to-br from-violet-600/30 to-blue-600/30 rounded-3xl opacity-0 group-focus-within:opacity-100 transition-opacity blur-sm pointer-events-none" />
+                                <div className="absolute top-4 left-4 flex gap-1.5 opacity-30 select-none pointer-events-none z-10">
                                     <div className="w-2 h-2 rounded-full bg-rose-500" />
                                     <div className="w-2 h-2 rounded-full bg-amber-500" />
                                     <div className="w-2 h-2 rounded-full bg-emerald-500" />
                                 </div>
                                 <textarea
-                                    className="w-full h-full min-h-[350px] bg-[#050505] border border-white/10 rounded-3xl p-8 pt-12 text-sm font-mono text-slate-300 focus:outline-none focus:border-violet-500/50 transition-all resize-none custom-scrollbar shadow-inner"
+                                    className="relative z-0 w-full h-full min-h-[350px] bg-[#050505] border border-white/10 rounded-3xl p-8 pt-12 text-sm font-mono text-slate-300 focus:outline-none focus:border-violet-500/50 transition-all resize-none custom-scrollbar shadow-inner cursor-text"
                                     placeholder="// Paste raw source code or technical documentation here..."
                                     value={inputCode}
                                     onChange={(e) => setInputCode(e.target.value)}
@@ -213,9 +245,9 @@ export default function DecompilerPage() {
                                                         {step.title}
                                                     </h4>
                                                     <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full border tracking-[0.2em] shadow-sm ${step.type === 'validation' ? 'bg-blue-500/5 text-blue-400 border-blue-500/20' :
-                                                            step.type === 'process' ? 'bg-amber-500/5 text-amber-400 border-amber-500/20' :
-                                                                step.type === 'neural' ? 'bg-violet-500/5 text-violet-400 border-violet-500/20' :
-                                                                    'bg-emerald-500/5 text-emerald-400 border-emerald-500/20'
+                                                        step.type === 'process' ? 'bg-amber-500/5 text-amber-400 border-amber-500/20' :
+                                                            step.type === 'neural' ? 'bg-violet-500/5 text-violet-400 border-violet-500/20' :
+                                                                'bg-emerald-500/5 text-emerald-400 border-emerald-500/20'
                                                         }`}>
                                                         {step.type}
                                                     </span>
@@ -253,6 +285,86 @@ export default function DecompilerPage() {
                     </BentoCard>
                 </div>
             </div>
+
+            {/* Error Display */}
+            {error && (
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-6 bg-rose-500/10 border border-rose-500/20 rounded-3xl flex items-center gap-4"
+                >
+                    <div className="p-3 bg-rose-500/20 rounded-2xl text-rose-400">
+                        <Zap size={20} />
+                    </div>
+                    <div>
+                        <p className="text-sm font-bold text-rose-400">Analysis Error</p>
+                        <p className="text-xs text-slate-400">{error}</p>
+                    </div>
+                </motion.div>
+            )}
+
+            {/* Analysis Insights Panel */}
+            {analysis && logicPath.length > 0 && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-32"
+                >
+                    {/* Summary */}
+                    <div className="p-8 bg-[#0a0a0a] rounded-[2rem] border border-white/10 space-y-4">
+                        <div className="flex items-center gap-3">
+                            <div className="p-3 bg-violet-500/10 rounded-2xl text-violet-400">
+                                <Code size={18} />
+                            </div>
+                            <h3 className="text-sm font-black text-white uppercase tracking-wide">Summary</h3>
+                        </div>
+                        <p className="text-sm text-slate-400 leading-relaxed">{analysis.summary}</p>
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-black text-slate-500 uppercase">Complexity:</span>
+                            <span className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase ${analysis.complexity === 'low' ? 'bg-emerald-500/10 text-emerald-400' :
+                                analysis.complexity === 'high' ? 'bg-rose-500/10 text-rose-400' :
+                                    'bg-amber-500/10 text-amber-400'
+                                }`}>{analysis.complexity}</span>
+                        </div>
+                    </div>
+
+                    {/* Key Concepts */}
+                    <div className="p-8 bg-[#0a0a0a] rounded-[2rem] border border-white/10 space-y-4">
+                        <div className="flex items-center gap-3">
+                            <div className="p-3 bg-blue-500/10 rounded-2xl text-blue-400">
+                                <Cpu size={18} />
+                            </div>
+                            <h3 className="text-sm font-black text-white uppercase tracking-wide">Key Concepts</h3>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            {analysis.concepts.map((concept, i) => (
+                                <span key={i} className="px-3 py-1.5 bg-blue-500/10 text-blue-400 text-xs font-bold rounded-xl border border-blue-500/20">
+                                    {concept}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Improvements */}
+                    <div className="p-8 bg-[#0a0a0a] rounded-[2rem] border border-white/10 space-y-4">
+                        <div className="flex items-center gap-3">
+                            <div className="p-3 bg-amber-500/10 rounded-2xl text-amber-400">
+                                <Zap size={18} />
+                            </div>
+                            <h3 className="text-sm font-black text-white uppercase tracking-wide">Suggestions</h3>
+                        </div>
+                        <ul className="space-y-2">
+                            {analysis.improvements.map((imp, i) => (
+                                <li key={i} className="flex items-start gap-2 text-sm text-slate-400">
+                                    <ChevronRight size={14} className="text-amber-400 mt-0.5 shrink-0" />
+                                    <span>{imp}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </motion.div>
+            )}
         </div>
     );
 }
+
