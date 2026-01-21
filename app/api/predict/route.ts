@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
-import { Buffer } from "buffer";
+import { processPDF } from "@/lib/ai/ingestion";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -11,10 +11,18 @@ export async function POST(req: NextRequest) {
 
         if (!file) return NextResponse.json({ error: "No file provided" }, { status: 400 });
 
-        // Extract text (Simple version: in production use 'pdf-parse')
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        const rawText = buffer.toString('utf-8').slice(0, 4000); // Limit context for API
+        let rawText = "";
+
+        if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
+            const chunks = await processPDF(file);
+            // Join first few chunks to fit context limits, or all if small
+            rawText = chunks.map(c => c.pageContent).join("\n").slice(0, 8000);
+        } else {
+            // Fallback for non-PDF files
+            const bytes = await file.arrayBuffer();
+            const buffer = Buffer.from(bytes);
+            rawText = buffer.toString('utf-8').slice(0, 4000);
+        }
 
         const prompt = `
   You are the Ghostwriter Hackathon Engine. Purpose: Win the competition by performing extreme technical distillation on the provided context.

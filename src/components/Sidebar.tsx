@@ -37,7 +37,6 @@ export default function Sidebar() {
                 { name: 'Overview', icon: <LayoutDashboard size={20} />, href: '/', subLabel: 'Main dashboard' },
                 { name: 'Workflow Assistant', icon: <Brain size={20} />, href: '/workflow-assistant', subLabel: 'Study extraction engine' },
                 { name: 'Exam Predictor', icon: <Target size={20} />, href: '/predictor', subLabel: 'Probability analysis' },
-                { name: 'Exam Study Plan', icon: <Target size={20} />, href: '/study-plan', subLabel: 'Weekly success roadmap' },
             ]
         },
         {
