@@ -98,11 +98,36 @@ export default function SystemStatus() {
           </div>
         </div>
 
-        <div className="space-y-1">
-          <StatusItem icon={Cpu} label="Compute" value="Gemini 2.0 Flash" status="online" latency={metrics.compute} />
-          <StatusItem icon={Database} label="Extraction" value="Multimodal" status="online" latency={metrics.extraction} />
-          <StatusItem icon={Globe} label="Traffic" value="Ghost-Net" status="online" latency={metrics.traffic} />
-        </div>
+        <motion.div
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.1
+              }
+            }
+          }}
+          initial="hidden"
+          animate="visible"
+          className="space-y-1"
+        >
+          {[
+            { icon: Cpu, label: "Compute", value: "Gemini 2.0 Flash", status: "online", latency: metrics.compute },
+            { icon: Database, label: "Extraction", value: "Multimodal", status: "online", latency: metrics.extraction },
+            { icon: Globe, label: "Traffic", value: "Ghost-Net", status: "online", latency: metrics.traffic }
+          ].map((item, idx) => (
+            <motion.div
+              key={idx}
+              variants={{
+                hidden: { opacity: 0, x: -10 },
+                visible: { opacity: 1, x: 0 }
+              }}
+            >
+              <StatusItem {...item as any} />
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </motion.div>
   );

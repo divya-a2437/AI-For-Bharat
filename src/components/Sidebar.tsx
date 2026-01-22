@@ -34,7 +34,8 @@ export default function Sidebar() {
         {
             title: 'General',
             items: [
-                { name: 'Overview', icon: <LayoutDashboard size={20} />, href: '/', subLabel: 'Main dashboard' },
+                { name: 'Dashboard', icon: <LayoutDashboard size={20} />, href: '/dashboard', subLabel: 'Overview analytics' },
+                { name: 'Landing', icon: <Box size={20} />, href: '/', subLabel: 'System landing page' },
                 { name: 'Workflow Assistant', icon: <Brain size={20} />, href: '/workflow-assistant', subLabel: 'Study extraction engine' },
                 { name: 'Exam Predictor', icon: <Target size={20} />, href: '/predictor', subLabel: 'Probability analysis' },
             ]

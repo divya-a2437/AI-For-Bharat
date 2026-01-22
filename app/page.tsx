@@ -12,6 +12,7 @@ import Waveform from "@/components/Waveform";
 import Flashcard from "@/components/Flashcard";
 import GhostlyLoader from "@/components/GhostlyLoader";
 import NeuralNetwork from "@/components/NeuralNetwork";
+import Galaxy from "@/components/Galaxy";
 import FocusTimer from "@/components/FocusTimer";
 import GhostChat from "@/components/GhostChat";
 import AgentRow from "@/components/AgentRow";
@@ -172,6 +173,7 @@ export default function Home() {
         <div className="aurora-blob blob-2" />
         <div className="aurora-blob blob-3" />
       </div>
+      <Galaxy />
       <NeuralNetwork />
       <div className="kinetic-grid" />
       <div className="grid-pulse-layer" />
@@ -186,11 +188,27 @@ export default function Home() {
       {/* Main Content Layout */}
       <div className="relative z-10 px-6 py-12 max-w-7xl mx-auto">
         {/* Header */}
-        <section className="relative pt-16 pb-16 px-6 max-w-7xl mx-auto text-center">
+        <motion.section
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.15,
+                delayChildren: 0.3
+              }
+            }
+          }}
+          className="relative pt-16 pb-16 px-6 max-w-7xl mx-auto text-center"
+        >
           {/* Stylish Logo Container */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, filter: "blur(10px)" }}
-            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+            variants={{
+              hidden: { opacity: 0, scale: 0.8, filter: "blur(10px)" },
+              visible: { opacity: 1, scale: 1, filter: "blur(0px)" }
+            }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="relative inline-block mb-4 group"
           >
@@ -210,8 +228,10 @@ export default function Home() {
 
           {/* Brand Header */}
           <motion.h2
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              visible: { opacity: 1, y: 0 }
+            }}
             className="text-[10px] font-black tracking-[0.4em] text-slate-500 uppercase mb-3"
           >
             GHOSTWRITER
@@ -219,8 +239,10 @@ export default function Home() {
 
           {/* The "Hook" Badge */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              visible: { opacity: 1, y: 0 }
+            }}
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/20 mb-6"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
@@ -230,94 +252,183 @@ export default function Home() {
           </motion.div>
 
           {/* The "Argument" Headline */}
-          <h1 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40 tracking-tighter mb-4 uppercase">
+          <motion.h1
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40 tracking-tighter mb-4 uppercase"
+          >
             Stop Mining. <span className="text-violet-500">Start Refining.</span>
-          </h1>
+          </motion.h1>
 
           {/* The "Fix" Subtext */}
-          <p className="text-base text-slate-400 max-w-2xl mx-auto leading-relaxed mb-8">
+          <motion.p
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            className="text-base text-slate-400 max-w-2xl mx-auto leading-relaxed mb-8"
+          >
             Ghostwriter is a high-frequency intelligence engine that decompiles
             technical complexity into actionable "Knowledge Blocks."
-          </p>
-        </section>
+          </motion.p>
+        </motion.section>
 
         {/* The Productivity Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 max-w-7xl mx-auto px-6 mb-32">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.1,
+              }
+            }
+          }}
+          className="grid grid-cols-1 md:grid-cols-12 gap-6 max-w-7xl mx-auto px-6 mb-32"
+        >
 
           {/* Learn Faster: Extraction Engine */}
-          <BentoCard
-            title="Signal Extraction"
-            subtitle="The Extraction Layer"
-            className="md:col-span-8 border-emerald-500/20"
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 40 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            className="md:col-span-8 h-full"
           >
-            <div className="flex items-center gap-4 mb-4">
-              <div className="p-2 bg-emerald-500/10 rounded-lg"><Target className="text-emerald-400" size={20} /></div>
-              <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">
-                Inverting the 70/30 Learning Ratio:
-              </p>
-            </div>
-            {/* Visual Proof: A simulated extraction bar */}
-            <div className="space-y-3 bg-black/20 p-4 rounded-xl border border-white/5">
-              <div className="h-4 w-full bg-white/5 rounded-full overflow-hidden flex">
-                <div className="w-[30%] bg-emerald-500 shadow-[0_0_15px_#10b981]" />
-                <div className="w-[70%] bg-slate-800/40" />
+            <BentoCard
+              title="Signal Extraction"
+              subtitle="The Extraction Layer"
+              className="border-emerald-500/20 h-full"
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className="p-2 bg-emerald-500/10 rounded-lg"><Target className="text-emerald-400" size={20} /></div>
+                <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">
+                  Inverting the 70/30 Learning Ratio:
+                </p>
               </div>
-              <div className="flex justify-between text-[10px] font-mono text-emerald-500 font-bold uppercase">
-                <span>Logic Detected (30%)</span>
-                <span>Raw Noise Filtered (70%)</span>
+              {/* Visual Proof: A simulated extraction bar */}
+              <div className="space-y-3 bg-black/20 p-4 rounded-xl border border-white/5 overflow-hidden group/bar">
+                <motion.div
+                  initial={{ width: 0 }}
+                  whileInView={{ width: "100%" }}
+                  transition={{ duration: 1, delay: 0.5 }}
+                  className="h-4 w-full bg-white/5 rounded-full overflow-hidden flex"
+                >
+                  <motion.div
+                    initial={{ width: 0 }}
+                    whileInView={{ width: "30%" }}
+                    transition={{ duration: 1.5, delay: 0.8, ease: "circOut" }}
+                    className="h-full bg-emerald-500 shadow-[0_0_15px_#10b981]"
+                  />
+                  <div className="w-[70%] bg-slate-800/40" />
+                </motion.div>
+                <div className="flex justify-between text-[10px] font-mono text-emerald-500 font-bold uppercase">
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ delay: 1.5 }}
+                  >Logic Detected (30%)</motion.span>
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ delay: 1.8 }}
+                  >Raw Noise Filtered (70%)</motion.span>
+                </div>
               </div>
-            </div>
-          </BentoCard>
+            </BentoCard>
+          </motion.div>
 
           {/* Work Smarter: Multi-Agent System */}
-          <BentoCard
-            title="Autonomous Stack"
-            subtitle="Multi-Agent System"
-            className="md:col-span-4 border-violet-500/20"
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 40 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            className="md:col-span-4 h-full"
           >
-            <div className="flex items-center gap-3 mb-4">
-              <Cpu className="text-violet-400" size={20} />
-              <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">Digital Workforce</h3>
-            </div>
-            <div className="space-y-4">
-              <AgentRow name="Archivist" status="indexing" action="Structuring Data" />
-              <AgentRow name="Listener" status="active" action="Parsing Syntax" />
-              <AgentRow name="Analyst" status="idle" action="Ready" />
-            </div>
-          </BentoCard>
+            <BentoCard
+              title="Autonomous Stack"
+              subtitle="Multi-Agent System"
+              className="border-violet-500/20 h-full"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <Cpu className="text-violet-400" size={20} />
+                <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">Digital Workforce</h3>
+              </div>
+              <div className="space-y-4">
+                <AgentRow name="Archivist" status="indexing" action="Structuring Data" />
+                <AgentRow name="Listener" status="active" action="Parsing Syntax" />
+                <AgentRow name="Analyst" status="idle" action="Ready" />
+              </div>
+            </BentoCard>
+          </motion.div>
 
           {/* 3. THE TECH ANGLE (Bento/Decompiler) & STUDY TIP */}
-          <BentoCard
-            title="Knowledge Decompiler"
-            subtitle="Technical Literacy"
-            className="md:col-span-8 border-blue-500/20"
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 40 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            className="md:col-span-8 h-full"
           >
-            <div className="flex flex-col gap-8">
-              <p className="text-sm text-slate-400 leading-relaxed">
-                Documentation is dense. We break complex technical hierarchies into atomic
-                <span className="text-blue-400 font-bold"> Knowledge Blocks</span>.
-              </p>
-              {/* Visual Proof: The "Block" representation */}
-              <div className="grid grid-cols-2 gap-2 opacity-80">
-                <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg text-center">
-                  <span className="text-[10px] font-bold text-blue-300">SYNTAX</span>
-                </div>
-                <div className="p-3 bg-violet-500/10 border border-violet-500/30 rounded-lg text-center">
-                  <span className="text-[10px] font-bold text-violet-300">LOGIC</span>
-                </div>
-                <div className="col-span-2 p-3 bg-white/5 border border-white/10 rounded-lg text-center">
-                  <span className="text-[10px] font-bold text-slate-400">CONTEXT</span>
+            <BentoCard
+              title="Knowledge Decompiler"
+              subtitle="Technical Literacy"
+              className="border-blue-500/20 h-full"
+            >
+              <div className="flex flex-col gap-8">
+                <p className="text-sm text-slate-400 leading-relaxed">
+                  Documentation is dense. We break complex technical hierarchies into atomic
+                  <span className="text-blue-400 font-bold"> Knowledge Blocks</span>.
+                </p>
+                {/* Visual Proof: The "Block" representation */}
+                <div className="grid grid-cols-2 gap-2 opacity-80">
+                  <motion.div
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg text-center cursor-default"
+                  >
+                    <span className="text-[10px] font-bold text-blue-300">SYNTAX</span>
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    className="p-3 bg-violet-500/10 border border-violet-500/30 rounded-lg text-center cursor-default"
+                  >
+                    <span className="text-[10px] font-bold text-violet-300">LOGIC</span>
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.02, y: -5 }}
+                    className="col-span-2 p-3 bg-white/5 border border-white/10 rounded-lg text-center cursor-default"
+                  >
+                    <span className="text-[10px] font-bold text-slate-400">CONTEXT</span>
+                  </motion.div>
                 </div>
               </div>
-            </div>
-          </BentoCard>
+            </BentoCard>
+          </motion.div>
 
-          <div className="md:col-span-4">
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 40 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            className="md:col-span-4 h-full"
+          >
             <StudyTip onOpenLesson={() => setShowLesson(true)} />
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <SystemStatus />
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          <SystemStatus />
+        </motion.div>
       </div>
 
       <QuickLesson
