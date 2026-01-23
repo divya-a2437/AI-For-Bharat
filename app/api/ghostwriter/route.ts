@@ -12,18 +12,25 @@ export async function GET(request: Request) {
         return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    // 2. Fetch users who have "Automated Mailing" enabled
-    const users = await prisma.user.findMany({
-        where: { autoMailEnabled: true }
-    });
+    try {
+        // 2. Fetch users who have "Automated Mailing" enabled
+        const users = await prisma.user.findMany({
+            where: { autoMailEnabled: true }
+        });
 
-    for (const user of users) {
-        // Logic to fetch user's tasks from the last week
-        // Logic to call OpenAI API to generate summary
-        // Logic to send email via Resend/Nodemailer
+        for (const user of users) {
+            // Logic to fetch user's tasks from the last week
+            // Logic to call OpenAI API to generate summary
+            // Logic to send email via Resend/Nodemailer
+        }
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error("Database error:", error);
+        return NextResponse.json({
+            error: "Database not configured. This feature requires a database setup."
+        }, { status: 503 });
     }
-
-    return NextResponse.json({ success: true });
 }
 
 export async function POST(req: Request) {
