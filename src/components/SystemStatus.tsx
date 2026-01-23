@@ -25,17 +25,17 @@ const StatusItem = ({ icon: Icon, label, value, status, latency }: StatusItemPro
         className={cn(
           "p-2 rounded-lg transition-all duration-300",
           status === "online"
-            ? "bg-emerald-500/10 text-emerald-400"
+            ? "bg-cyan-500/10 text-cyan-400"
             : status === "warning"
-              ? "bg-amber-500/10 text-amber-400"
-              : "bg-blue-500/10 text-blue-400"
+              ? "bg-white/10 text-white/60"
+              : "bg-cyan-600/10 text-cyan-500"
         )}
       >
         <Icon size={16} />
       </div>
       <div>
-        <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">{label}</p>
-        <p className="text-sm font-semibold text-slate-200">{value}</p>
+        <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">{label}</p>
+        <p className="text-xs font-black text-white/80 uppercase tracking-tight">{value}</p>
       </div>
     </div>
 
@@ -45,15 +45,15 @@ const StatusItem = ({ icon: Icon, label, value, status, latency }: StatusItemPro
           className={cn(
             "h-1.5 w-1.5 rounded-full animate-pulse",
             status === "online"
-              ? "bg-emerald-500"
+              ? "bg-cyan-500 shadow-[0_0_8px_#22d3ee]"
               : status === "warning"
-                ? "bg-amber-500"
-                : "bg-blue-500"
+                ? "bg-white/40"
+                : "bg-cyan-600"
           )}
         />
-        <span className="text-[10px] font-bold text-slate-500 uppercase">{status}</span>
+        <span className="text-[9px] font-black text-white/40 uppercase tracking-widest">{status}</span>
       </div>
-      <span className="text-[10px] text-slate-600 mt-1 font-mono tabular-nums">{latency}ms</span>
+      <span className="text-[9px] text-white/20 mt-1 font-black tabular-nums">{latency}ms</span>
     </div>
   </div>
 );

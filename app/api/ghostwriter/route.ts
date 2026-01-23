@@ -27,7 +27,25 @@ export async function GET(request: Request) {
 }
 
 export async function POST(req: Request) {
-    const { prompt } = await req.json();
+    let prompt = "";
+    try {
+        const contentType = req.headers.get("content-type") || "";
+        if (contentType.includes("application/json")) {
+            const body = await req.json();
+            prompt = body.prompt;
+        } else {
+            const formData = await req.formData();
+            prompt = formData.get("prompt")?.toString() || "Explain this file.";
+            const file = formData.get("file") as File | null;
+            if (file) {
+                // For Ghostwriter, we might want to extract text from file too
+                // But for now let's just use the filename
+                prompt += `\n\nContext from file: ${file.name}`;
+            }
+        }
+    } catch (e) {
+        return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    }
 
     const result = streamText({
         model: openai('gpt-4o-mini'),

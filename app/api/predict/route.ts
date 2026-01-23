@@ -6,23 +6,32 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: NextRequest) {
     try {
+        console.log("Prediction request received");
         const formData = await req.formData();
         const file = formData.get("file") as File | null;
 
-        if (!file) return NextResponse.json({ error: "No file provided" }, { status: 400 });
+        if (!file) {
+            console.log("No file provided in request");
+            return NextResponse.json({ error: "No file provided" }, { status: 400 });
+        }
 
+        console.log(`Processing file: ${file.name} (${file.type})`);
         let rawText = "";
 
         if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
+            console.log("PDF detected, starting extraction...");
             const chunks = await processPDF(file);
+            console.log(`PDF processed, extracted ${chunks.length} chunks`);
             // Join first few chunks to fit context limits, or all if small
             rawText = chunks.map(c => c.pageContent).join("\n").slice(0, 8000);
         } else {
-            // Fallback for non-PDF files
+            console.log("Non-PDF file detected, reading as text...");
             const bytes = await file.arrayBuffer();
             const buffer = Buffer.from(bytes);
             rawText = buffer.toString('utf-8').slice(0, 4000);
         }
+
+        console.log(`Extracted ${rawText.length} characters of text. Sending to OpenAI...`);
 
         const prompt = `
   You are the Ghostwriter Hackathon Engine. Purpose: Win the competition by performing extreme technical distillation on the provided context.
@@ -30,7 +39,7 @@ export async function POST(req: NextRequest) {
   1. SIGNAL EXTRACTION (30% vs 70%): Identify the core technical alpha that drives the majority of project value.
   2. BATTLE PLAN: Map out a high-speed execution path with strategic priorities and architectural flows.
   3. COMPETITIVE EDGE: Identify critical technical gaps and provide 'bridgeAction' tasks to ensure a flawless demo.
-
+ 
   IMPORTANT: To save tokens and optimize for high-frequency processing, return a JSON object with compact CSV strings (DELIMITER: '|'). DO NOT include headers.
 
   JSON structure:
@@ -54,20 +63,12 @@ export async function POST(req: NextRequest) {
             max_tokens: 2048,
         });
 
+        console.log("OpenAI response received");
         const rawContent = response.choices[0].message.content;
         if (!rawContent) throw new Error("No content generated");
 
         const data = JSON.parse(rawContent);
-
-        /**
-         * Compact "CSV-within-JSON" structure requested from AI:
-         * {
-         *   "predictions": "question|confidence|reason",
-         *   "technicalMatrix": "concept|difficulty|priority|prob",
-         *   "vaultBlocks": "title|content|category|tags(comma-separated)",
-         *   "distillation": "markdown..."
-         * }
-         */
+        console.log("JSON parsed successfully");
 
         // Helper to parse CSV strings back to Objects
         const parseCSV = (csv: string, keys: string[]) => {
@@ -95,9 +96,10 @@ export async function POST(req: NextRequest) {
             distillation: data.distillation
         };
 
+        console.log("Prediction finalization complete");
         return NextResponse.json(finalized);
-    } catch (error) {
-        console.error("Prediction error:", error);
-        return NextResponse.json({ error: "Prediction Engine Failed" }, { status: 500 });
+    } catch (error: any) {
+        console.error("Prediction error stack:", error.stack || error);
+        return NextResponse.json({ error: "Prediction Engine Failed", details: error.message }, { status: 500 });
     }
 }

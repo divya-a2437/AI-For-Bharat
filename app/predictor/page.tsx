@@ -44,24 +44,20 @@ export default function PredictorPage() {
             const formData = new FormData();
             formData.append("file", file);
             const res = await fetch("/api/predict", { method: "POST", body: formData });
-
-            if (!res.ok) throw new Error("API Route not found or failed");
-
             const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || data.details || "API Route failed");
+            }
+
             setPredictions(data.predictions || []);
             if (data.technicalMatrix) setTechnicalMatrix(data.technicalMatrix);
             if (data.mermaidChart) setMermaidChart(data.mermaidChart);
             setStatus("done");
-        } catch (err) {
-            console.error("Prediction failed", err);
-            // Fallback for demo purposes if API fails
-            setTimeout(() => {
-                setPredictions([
-                    { question: "How does the Event Loop handle I/O?", confidence: 92, reason: "Core architectural concept mentioned multiple times." },
-                    { question: "Explain the difference between microtasks and macrotasks.", confidence: 85, reason: "System priority concept." }
-                ]);
-                setStatus("done");
-            }, 2000);
+        } catch (err: any) {
+            console.error("Prediction failed:", err);
+            setStatus("idle");
+            alert(`Prediction failed: ${err.message}`);
         }
     };
 
