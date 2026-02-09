@@ -7,7 +7,7 @@ import {
     Clock, Grid, List, ChevronRight,
     Library as LibraryIcon, Star, Sparkles,
     Box, Layers, Zap, ArrowUpRight, HelpCircle,
-    CheckCircle2, Info, GraduationCap, Ghost, ArrowRight
+    CheckCircle2, Info, GraduationCap, Ghost, ArrowRight, ExternalLink
 } from 'lucide-react';
 
 import BentoCard from "@/components/BentoCard";
