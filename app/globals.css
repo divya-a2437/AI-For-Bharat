@@ -94,7 +94,18 @@
   }
 }
 
+@keyframes scan {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
 @keyframes scan-line {
+
   0% {
     transform: translateY(-100%);
     opacity: 0;
@@ -593,4 +604,23 @@ html {
 
 .animate-float-slow {
   animation: float-slow 4s ease-in-out infinite;
+}
+
+@keyframes gradient-x {
+  0% {
+    background-position: 0% 50%
+  }
+
+  50% {
+    background-position: 100% 50%
+  }
+
+  100% {
+    background-position: 0% 50%
+  }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 15s ease infinite;
 }

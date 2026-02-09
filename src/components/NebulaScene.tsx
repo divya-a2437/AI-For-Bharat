@@ -93,6 +93,54 @@ function Rig() {
     });
 }
 
+function CentralHub() {
+    const groupRef = useRef<THREE.Group>(null);
+    const outerRef = useRef<THREE.Mesh>(null);
+    const innerRef = useRef<THREE.Mesh>(null);
+
+    useFrame((state) => {
+        const t = state.clock.getElapsedTime();
+        if (groupRef.current) {
+            groupRef.current.rotation.y = t * 0.1;
+        }
+        if (outerRef.current) {
+            outerRef.current.rotation.y = -t * 0.2;
+            outerRef.current.rotation.z = t * 0.15;
+        }
+        if (innerRef.current) {
+            innerRef.current.rotation.y = t * 0.3;
+            innerRef.current.rotation.x = t * 0.2;
+        }
+    });
+
+    return (
+        <Float speed={1.5} rotationIntensity={0.5} floatIntensity={1}>
+            <group ref={groupRef}>
+                {/* Core Sphere */}
+                <Sphere args={[6, 64, 64]}>
+                    <MeshWobbleMaterial
+                        color="#020617"
+                        factor={0.4}
+                        speed={2}
+                        roughness={0.1}
+                        metalness={0.9}
+                    />
+                </Sphere>
+
+                {/* Outer Wireframe */}
+                <Icosahedron ref={outerRef} args={[10, 2]}>
+                    <meshBasicMaterial color="#3b82f6" wireframe transparent opacity={0.15} />
+                </Icosahedron>
+
+                {/* Inner Wireframe */}
+                <Icosahedron ref={innerRef} args={[8, 1]}>
+                    <meshBasicMaterial color="#22d3ee" wireframe transparent opacity={0.1} />
+                </Icosahedron>
+            </group>
+        </Float>
+    );
+}
+
 export default function NebulaScene() {
     return (
         <div className="fixed inset-0 z-0 pointer-events-none bg-[#020617]">
@@ -107,30 +155,7 @@ export default function NebulaScene() {
 
                 <Stars radius={100} depth={50} count={6000} factor={6} saturation={0} fade speed={1.5} />
 
-                <Float speed={1.5} rotationIntensity={0.5} floatIntensity={1}>
-                    <group>
-                        {/* Core Sphere */}
-                        <Sphere args={[6, 64, 64]}>
-                            <MeshWobbleMaterial
-                                color="#020617"
-                                factor={0.4}
-                                speed={2}
-                                roughness={0.1}
-                                metalness={0.9}
-                            />
-                        </Sphere>
-
-                        {/* Outter Wireframe */}
-                        <Icosahedron args={[10, 2]}>
-                            <meshBasicMaterial color="#3b82f6" wireframe transparent opacity={0.15} />
-                        </Icosahedron>
-
-                        {/* Middle Orbiters */}
-                        <Icosahedron args={[8, 1]}>
-                            <meshBasicMaterial color="#22d3ee" wireframe transparent opacity={0.1} />
-                        </Icosahedron>
-                    </group>
-                </Float>
+                <CentralHub />
 
                 <Cloud count={20} />
                 <DataStream count={60} />
