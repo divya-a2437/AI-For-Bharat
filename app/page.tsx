@@ -13,6 +13,7 @@ import AgentRow from "@/components/AgentRow";
 import StudyTip from "@/components/StudyTip";
 import QuickLesson from "@/components/QuickLesson";
 import { Brain, Mic, Layers, Ghost, Loader2, BookOpen, FileText, Music, Video, CheckCircle2, FileDown, Share2, Zap, ExternalLink, Target, Cpu, Activity, ArrowRight, Shield, Terminal, Code2 } from "lucide-react";
+import Link from "next/link";
 import dynamic from "next/dynamic";
 
 const NebulaScene = dynamic(() => import("@/components/NebulaScene"), { ssr: false });
@@ -170,10 +171,21 @@ export default function Home() {
         </section>
 
         {/* --- PRODUCTIVITY GRID --- */}
-        <section className="relative px-6 py-40 max-w-7xl mx-auto space-y-32">
-          <div className="flex flex-col items-center text-center space-y-6">
-            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-[11px] font-black text-violet-400 uppercase tracking-[0.5em] italic">Protocol Capabilities</motion.div>
-            <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-5xl md:text-7xl font-black text-white uppercase italic tracking-tighter leading-none">The Neutral Logic Stack</motion.h2>
+        <section id="stack" className="relative px-6 py-40 max-w-7xl mx-auto space-y-32">
+          <div className="flex flex-col md:flex-row justify-between items-end gap-8">
+            <div className="flex flex-col space-y-6">
+              <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-[11px] font-black text-violet-400 uppercase tracking-[0.5em] italic">Protocol Capabilities</motion.div>
+              <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-5xl md:text-7xl font-black text-white uppercase italic tracking-tighter leading-none">The Neutral Logic Stack</motion.h2>
+            </div>
+            <Link href="/pipeline">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-all flex items-center gap-4 italic shadow-2xl"
+              >
+                View Pipeline Architecture <ExternalLink size={14} />
+              </motion.button>
+            </Link>
           </div>
 
           <motion.div

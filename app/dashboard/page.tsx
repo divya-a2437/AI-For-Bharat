@@ -1,26 +1,16 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
-    Home,
-    Layers,
     Cpu,
     Terminal,
-    Settings,
-    User,
-    ExternalLink,
-    Circle,
-    Code2,
-    Atom,
     Database,
-    Cloud,
     ArrowUpRight,
     Zap,
     Brain,
     Target,
     Activity,
-    Ghost,
     ChevronRight,
     ArrowRight
 } from "lucide-react";
@@ -98,7 +88,7 @@ export default function DashboardOverview() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                     {/* Left: Quick Actions & Status */}
                     <div className="lg:col-span-12 xl:col-span-4 space-y-10">
-                        <div className="relative group/box overflow-hidden bg-[#0a0a0a] border border-white/5 rounded-[3rem] p-10 flex flex-col gap-10 shadow-2xl shadow-inner group/box transition-all hover:border-violet-500/20">
+                        <div className="relative group/box overflow-hidden bg-[#0a0a0a] border border-white/5 rounded-[3rem] p-10 flex flex-col gap-10 shadow-2xl shadow-inner transition-all hover:border-violet-500/20">
                             <div className="absolute top-0 right-0 p-10 opacity-0 group-hover/box:opacity-[0.03] transition-opacity rotate-12 scale-[3]"><Activity size={60} /></div>
                             <div className="flex items-center justify-between relative z-10">
                                 <div className="space-y-1">
@@ -163,12 +153,12 @@ export default function DashboardOverview() {
                                 whileHover={{ y: -8 }}
                                 className="group relative p-12 bg-[#0a0a0a] border border-white/5 rounded-[3.5rem] flex flex-col gap-10 hover:border-white/20 transition-all shadow-2xl overflow-hidden shadow-inner"
                             >
-                                <div className={`absolute inset-0 bg-gradient-to-br ${feature.color.replace('to-', 'to-')}/5 opacity-0 group-hover:opacity-100 transition-opacity`} />
+                                <div className={`absolute inset-0 bg-gradient-to-br ${feature.color.split(' ').map(cls => `${cls}/5`).join(' ')} opacity-0 group-hover:opacity-100 transition-opacity`} />
                                 <div className="absolute top-0 right-0 p-12 opacity-0 group-hover:opacity-[0.02] transition-opacity rotate-12 scale-[3]">{feature.icon}</div>
 
                                 <div className="flex items-start justify-between relative z-10">
                                     <div className={`p-6 rounded-[2.5rem] bg-white/[0.02] text-slate-700 border border-white/5 shadow-2xl transition-all group-hover:scale-110 group-hover:text-white group-hover:bg-white/10`}>
-                                        {React.cloneElement(feature.icon as React.ReactElement, { size: 40 })}
+                                        {React.cloneElement(feature.icon as React.ReactElement<any>, { size: 40 })}
                                     </div>
                                     <div className="p-3 bg-white/5 rounded-2xl text-slate-500 hover:text-white transition-all cursor-pointer"><ArrowUpRight size={20} /></div>
                                 </div>
