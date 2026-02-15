@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     Terminal, Cpu, Code, Zap, ChevronRight,
     Loader2, Search, Share2, Download,
-    ArrowRight, Activity, Database, ShieldCheck, Code2, Layers, Ghost
+    ArrowRight, Activity, Database, ShieldCheck, Code2, Layers, Ghost,
+    CircuitBoard
 } from 'lucide-react';
 
 interface DecompilerStep {
@@ -238,9 +239,9 @@ export default function DecompilerPage() {
                                             >
                                                 <div className="flex flex-col items-center gap-4 shrink-0">
                                                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-black italic tracking-tighter border-2 shadow-2xl ${step.type === 'validation' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                                                            step.type === 'process' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
-                                                                step.type === 'neural' ? 'bg-violet-500/10 text-violet-400 border-violet-500/20' :
-                                                                    'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                                        step.type === 'process' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                                                            step.type === 'neural' ? 'bg-violet-500/10 text-violet-400 border-violet-500/20' :
+                                                                'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                                                         }`}>
                                                         {index + 1}
                                                     </div>
@@ -287,7 +288,7 @@ export default function DecompilerPage() {
 
                         <div className="p-10 bg-[#0a0a0a] border border-white/5 rounded-[3rem] space-y-6 shadow-2xl">
                             <div className="flex items-center gap-4">
-                                <div className="p-3 bg-blue-600/10 border border-blue-500/20 text-blue-400 rounded-2xl"><Brain size={22} /></div>
+                                <div className="p-3 bg-blue-600/10 border border-blue-500/20 text-blue-400 rounded-2xl"><CircuitBoard size={22} /></div>
                                 <h5 className="text-[10px] font-black text-white uppercase tracking-[0.3em]">Key Concepts</h5>
                             </div>
                             <div className="flex flex-wrap gap-3">

@@ -116,16 +116,7 @@ function CentralHub() {
     return (
         <Float speed={1.5} rotationIntensity={0.5} floatIntensity={1}>
             <group ref={groupRef}>
-                {/* Core Sphere */}
-                <Sphere args={[6, 64, 64]}>
-                    <MeshWobbleMaterial
-                        color="#020617"
-                        factor={0.4}
-                        speed={2}
-                        roughness={0.1}
-                        metalness={0.9}
-                    />
-                </Sphere>
+                {/* Wireframe Structures */}
 
                 {/* Outer Wireframe */}
                 <Icosahedron ref={outerRef} args={[10, 2]}>
