@@ -84,7 +84,7 @@ export default function Home() {
               initial={{ filter: "blur(20px)", opacity: 0, scale: 0.9 }}
               animate={{ filter: "blur(0px)", opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.5 }}
-              className="text-[clamp(3.5rem,12vw,9rem)] font-black leading-[0.8] tracking-[-0.02em] text-center mb-8 uppercase relative"
+              className="text-[clamp(2.5rem,8vw,6rem)] font-black leading-[0.85] tracking-[-0.02em] text-center mb-8 uppercase relative px-4"
               style={{ fontFamily: "'Orbitron', sans-serif", letterSpacing: '0.05em' }}
             >
               <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-b from-white via-violet-100 to-violet-400/60" style={{
