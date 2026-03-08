@@ -182,7 +182,7 @@ export default function WorkflowAssistant() {
                                     <div className="space-y-3">
                                         <p className="text-xl font-black text-white uppercase italic tracking-tight">Drop Source Materials</p>
                                         <p className="text-xs text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
-                                            Select PDF, DOCX, or PPTX. <br /> Max combined size <span className="text-white italic">500.00 MiB</span>.
+                                            Select PDF, DOCX, or PPTX.
                                         </p>
                                     </div>
                                 </div>

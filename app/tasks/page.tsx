@@ -35,9 +35,9 @@ export default function TaskBoard() {
             color: 'text-slate-400',
             bgColor: 'bg-slate-500/10',
             tasks: [
-                { id: '1', title: 'Validate Binary Search Tree', description: 'LeetCode #98: Implement recursive validation with min/max bounds', priority: 'high', tags: ['DSA', 'Trees'], dueDate: 'Tonight' },
-                { id: '2', title: 'Binary Tree Level Order Traversal', description: 'LeetCode #102: BFS implementation using a queue', priority: 'medium', tags: ['DSA', 'Trees'], dueDate: 'Tomorrow' },
-                { id: '3', title: 'Lowest Common Ancestor', description: 'LeetCode #236: Find LCA in a general binary tree', priority: 'high', tags: ['DSA', 'Trees'], dueDate: 'In 2 days' },
+                { id: '1', title: 'Review Chapter 5: Distributed Systems', description: 'Focus on consensus algorithms and Paxos', priority: 'high', tags: ['Exam Prep'], dueDate: 'Tomorrow' },
+                { id: '2', title: 'Practice LeetCode - Trees', description: 'Complete 5 medium difficulty problems', priority: 'medium', tags: ['DSA'], dueDate: 'In 3 days' },
+                { id: '3', title: 'Watch lecture recordings', description: 'Database normalization lectures 7-9', priority: 'low', tags: ['Coursework'], dueDate: 'This week' },
             ]
         },
         {
@@ -47,8 +47,8 @@ export default function TaskBoard() {
             color: 'text-amber-400',
             bgColor: 'bg-amber-500/10',
             tasks: [
-                { id: '4', title: 'Invert Binary Tree', description: 'LeetCode #226: Basic recursive swap implementation', priority: 'low', tags: ['DSA', 'Trees'], dueDate: 'Ongoing' },
-                { id: '5', title: 'Maximum Depth of Binary Tree', description: 'LeetCode #104: DFS solution implementation', priority: 'low', tags: ['DSA', 'Trees'], dueDate: 'Ongoing' },
+                { id: '4', title: 'Build React Portfolio Project', description: 'Complete the dashboard section with charts', priority: 'high', tags: ['Project'], dueDate: 'In 2 days' },
+                { id: '5', title: 'Study TypeScript Generics', description: 'Advanced patterns and utility types', priority: 'medium', tags: ['Learning'], dueDate: 'Ongoing' },
             ]
         },
         {
@@ -58,8 +58,8 @@ export default function TaskBoard() {
             color: 'text-emerald-400',
             bgColor: 'bg-emerald-500/10',
             tasks: [
-                { id: '6', title: 'Diameter of Binary Tree', description: 'LeetCode #543: Mastery of recursive depth calculations', priority: 'medium', tags: ['DSA', 'Trees'], dueDate: 'Completed' },
-                { id: '7', title: 'Path Sum', description: 'LeetCode #112: DFS path verification', priority: 'low', tags: ['DSA', 'Trees'], dueDate: 'Completed' },
+                { id: '6', title: 'Complete JavaScript Quiz', description: 'Scored 95% on closures and async', priority: 'medium', tags: ['Assessment'], dueDate: 'Completed' },
+                { id: '7', title: 'Setup development environment', description: 'VS Code, Node.js, and all extensions', priority: 'low', tags: ['Setup'], dueDate: 'Completed' },
             ]
         }
     ]);

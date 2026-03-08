@@ -14,7 +14,7 @@ export default function NeuralNetwork() {
 
         let animationFrameId: number;
         let particles: Particle[] = [];
-        let mouse = { x: 0, y: 0 };
+        const mouse = { x: 0, y: 0 };
 
         const resize = () => {
             if (!canvasRef.current) return;

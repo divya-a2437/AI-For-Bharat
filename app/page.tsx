@@ -12,7 +12,7 @@ import GhostChat from "@/components/GhostChat";
 import AgentRow from "@/components/AgentRow";
 import StudyTip from "@/components/StudyTip";
 import QuickLesson from "@/components/QuickLesson";
-import { Brain, Mic, Layers, Ghost, Loader2, BookOpen, FileText, Music, Video, CheckCircle2, FileDown, Share2, Zap, ExternalLink, Target, Cpu, Activity, ArrowRight, Shield, Terminal, Code2 } from "lucide-react";
+import { Brain, Mic, Layers, Ghost, Loader2, BookOpen, FileText, Music, Video, CheckCircle2, FileDown, Share2, Zap, ExternalLink, Target, Cpu, Activity, ArrowRight, Shield, Terminal, Code2, Sparkles } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 
@@ -23,7 +23,6 @@ type AgentState = "idle" | "processing" | "done";
 export default function Home() {
   // Agent states
   const [predictorStatus, setPredictorStatus] = useState<AgentState>("idle");
-  const [predictions, setPredictions] = useState<{ question: string; confidence: number; reason: string }[]>([]);
   const [archivistStatus, setArchivistStatus] = useState<AgentState>("idle");
   const [listenerStatus, setListenerStatus] = useState<AgentState>("idle");
   const [ghostwriterStatus, setGhostwriterStatus] = useState<AgentState>("idle");
@@ -31,8 +30,11 @@ export default function Home() {
   // Data
   const [currentFile, setCurrentFile] = useState<File | null>(null);
   const [ghostwriterOutput, setGhostwriterOutput] = useState<string>("");
-  const [flashcards, setFlashcards] = useState<{ question: string; answer: string }[]>([]);
+  const [flashcards, setFlashcards] = useState<{ question: string; answer: string; reason: string }[]>([]);
+  const [technicalMatrix, setTechnicalMatrix] = useState<{ concept: string; difficulty: string; priority: string; prob: number }[]>([]);
   const [showLesson, setShowLesson] = useState(false);
+  const [status, setStatus] = useState<AgentState>("idle");
+  const [loadingStage, setLoadingStage] = useState<string>("");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -85,7 +87,7 @@ export default function Home() {
               animate={{ filter: "blur(0px)", opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.5 }}
               className="text-[clamp(2.5rem,8vw,6rem)] font-black leading-[0.85] tracking-[-0.02em] text-center mb-8 uppercase relative px-4"
-              style={{ fontFamily: "'Orbitron', sans-serif", letterSpacing: '0.05em' }}
+              style={{ fontFamily: "'Orbitron', sans-serif", letterSpacing: '0.05em' } as any}
             >
               <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-b from-white via-violet-100 to-violet-400/60" style={{
                 textShadow: '0 0 80px rgba(139, 92, 246, 0.5), 0 0 40px rgba(139, 92, 246, 0.3)',
@@ -165,12 +167,133 @@ export default function Home() {
               className="w-full max-w-4xl relative"
             >
               <div className="absolute -inset-20 bg-violet-500/5 blur-[120px] rounded-full pointer-events-none" />
-              <UploadZone onUpload={(file) => {
-                setCurrentFile(file);
-                setArchivistStatus("processing");
-                setTimeout(() => setArchivistStatus("done"), 2000);
+              <UploadZone onUpload={async (file) => {
+                try {
+                  setCurrentFile(file);
+                  setGhostwriterStatus("processing");
+
+                  setLoadingStage("Extracting PDF Content...");
+                  setArchivistStatus("processing");
+
+                  const formData = new FormData();
+                  formData.append("file", file);
+
+                  // Start AI call simulation to keep user engaged
+                  const stageTimer = setInterval(() => {
+                    setLoadingStage(prev => {
+                      if (prev.includes("Extracting")) return "Analyzing Academic Signals...";
+                      if (prev.includes("Analyzing")) return "Generating Strategic Brief...";
+                      if (prev.includes("Generating")) return "Finalizing Neural Nodes...";
+                      return "Almost ready...";
+                    });
+                  }, 4000);
+
+                  const res = await fetch("/api/predict", {
+                    method: "POST",
+                    body: formData,
+                  });
+
+                  clearInterval(stageTimer);
+                  if (!res.ok) throw new Error("Processing failed");
+
+                  const data = await res.json();
+
+                  setFlashcards(data.predictions || []);
+                  setTechnicalMatrix(data.technicalMatrix || []);
+                  setGhostwriterOutput(data.distillation || "");
+
+                  setPredictorStatus("done");
+                  setArchivistStatus("done");
+                  setGhostwriterStatus("done");
+                  setLoadingStage("");
+                } catch (error) {
+                  console.error("AI processing failed:", error);
+                  setPredictorStatus("idle");
+                  setArchivistStatus("idle");
+                  setGhostwriterStatus("idle");
+                  setLoadingStage("");
+                  alert("AI Engine Failed to respond. Ensure your API key is correct.");
+                }
               }} />
+
+              {/* Granular Loading Feedback */}
+              {loadingStage && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-8 flex flex-col items-center gap-4"
+                >
+                  <div className="flex items-center gap-3 px-6 py-3 bg-white/[0.03] border border-white/10 rounded-2xl backdrop-blur-3xl shadow-2xl">
+                    <Loader2 className="animate-spin text-violet-400" size={18} />
+                    <span className="text-xs font-black text-white uppercase italic tracking-widest">{loadingStage}</span>
+                  </div>
+                  <div className="w-64 h-1 bg-white/5 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-gradient-to-r from-violet-600 to-indigo-600 shadow-glow"
+                      initial={{ width: "0%" }}
+                      animate={{ width: "90%" }}
+                      transition={{ duration: 15, ease: "linear" }}
+                    />
+                  </div>
+                </motion.div>
+              )}
             </motion.div>
+
+            {/* RESULTS AREA ON HOMEPAGE */}
+            {ghostwriterStatus === "done" && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-7xl mt-20 grid grid-cols-1 md:grid-cols-12 gap-10 pb-20"
+              >
+                {/* Executive Summary */}
+                <div className="md:col-span-8 p-12 bg-white/[0.02] border border-white/5 rounded-[3rem] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-gradient-to-r from-violet-500/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                  <div className="flex items-center gap-4 mb-10">
+                    <div className="p-3 bg-violet-600/10 border border-violet-500/20 rounded-2xl text-violet-400">
+                      <Sparkles size={24} />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">Strategic Distillation</h3>
+                      <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest leading-none">The Neutral AI Protocol // Result</p>
+                    </div>
+                  </div>
+                  <div className="prose prose-invert max-w-none 
+                    prose-p:text-slate-300 prose-p:leading-relaxed prose-p:text-sm prose-p:font-medium
+                    prose-strong:text-white prose-strong:font-black
+                    prose-headings:text-white prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight
+                    prose-ul:list-disc prose-ul:pl-6 prose-li:text-slate-400 prose-li:mb-2 prose-li:text-sm italic">
+                    <ReactMarkdown>{ghostwriterOutput}</ReactMarkdown>
+                  </div>
+                </div>
+
+                {/* Vertical Signal Stack */}
+                <div className="md:col-span-4 space-y-8">
+                  <div className="flex items-center gap-4 px-6">
+                    <Target className="text-emerald-400" size={24} />
+                    <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.4em] italic">Priority Nodes</h3>
+                  </div>
+                  <div className="space-y-4">
+                    {flashcards.map((item, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                        className="p-8 bg-white/[0.02] border border-white/5 rounded-[2.5rem] hover:bg-white/[0.05] hover:border-violet-500/30 transition-all cursor-pointer group"
+                      >
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="p-2.5 bg-violet-500/10 text-violet-400 rounded-xl group-hover:bg-violet-500 group-hover:text-white transition-all"><BookOpen size={16} /></div>
+                          <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest">{item.answer || "Node active"}</div>
+                        </div>
+                        <h4 className="text-sm font-black text-white uppercase italic tracking-tight mb-2 leading-tight">{item.question}</h4>
+                        <p className="text-[10px] text-slate-500 font-medium leading-relaxed italic">{item.reason}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </motion.div>
         </section>
 

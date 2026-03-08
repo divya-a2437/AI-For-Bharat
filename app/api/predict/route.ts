@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { processPDF } from "@/lib/ai/ingestion";
+import dotenv from "dotenv";
+
+dotenv.config({ override: true });
 
 const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || ''
+    apiKey: process.env.OPENAI_API_KEY || '',
+    baseURL: process.env.OPENAI_BASE_URL || undefined,
 });
 
 export async function POST(req: NextRequest) {
@@ -26,6 +30,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "No file provided" }, { status: 400 });
         }
 
+        console.time("predict-api-total");
         console.log(`Processing file: ${file.name} (${file.type})`);
         let rawText = "";
 
@@ -33,8 +38,8 @@ export async function POST(req: NextRequest) {
             console.log("PDF detected, starting extraction...");
             const chunks = await processPDF(file);
             console.log(`PDF processed, extracted ${chunks.length} chunks`);
-            // Join first few chunks to fit context limits, or all if small
-            rawText = chunks.map(c => c.pageContent).join("\n").slice(0, 8000);
+            // Optimize context window for speed vs accuracy balance
+            rawText = chunks.map((c: any) => c.pageContent).join("\n").slice(0, 9000);
         } else {
             console.log("Non-PDF file detected, reading as text...");
             const bytes = await file.arrayBuffer();
@@ -43,84 +48,62 @@ export async function POST(req: NextRequest) {
         }
 
         console.log(`Extracted ${rawText.length} characters of text.`);
-        if (rawText.length === 0) {
-            console.warn("Warning: rawText is empty. Analysis might be poor.");
-        }
-        console.log("Sending to OpenAI...");
-
 
         const prompt = `
-  You are the Ghostwriter Hackathon Engine. Purpose: Win the competition by performing extreme technical distillation on the provided context.
+  Analyze this academic material and extract key signals with high technical depth. 
   
-  1. SIGNAL EXTRACTION (30% vs 70%): Identify the core technical alpha that drives the majority of project value.
-  2. BATTLE PLAN: Map out a high-speed execution path with strategic priorities and architectural flows.
-  3. COMPETITIVE EDGE: Identify critical technical gaps and provide 'bridgeAction' tasks to ensure a flawless demo.
- 
-  IMPORTANT: To save tokens and optimize for high-frequency processing, return a JSON object with compact CSV strings (DELIMITER: '|'). DO NOT include headers.
-
-  JSON structure:
+  RETURN ONLY A JSON OBJECT:
   {
-    "predictions": "priority_task|confidence_score|strategic_impact",
-    "technicalMatrix": "concept|difficulty|hackathon_priority|prob",
-    "mermaidChart": "string (Valid Mermaid.js 'graph TD' syntax for the optimized winning architecture)",
-    "vaultBlocks": "title|content|category(Syntax|Logic|Architecture)|tags",
-    "dependencyMatrix": "library|strategic_value|role|version",
-    "gapAnalysis": "gap|risk_to_demo|bridgeAction|type(lesson|mock)",
-    "distillation": "# Winning Hackathon Strategy\n\n[Markdown summary of the tech alpha, MVP core, and execution roadmap. Use bolding and high-impact terminology.]"
+    "predictions": [
+      { "question": "High-probability exam question topic", "confidence": 0.95, "reason": "Why this is likely to appear" }
+    ],
+    "technicalMatrix": [
+      { "concept": "Core concept name", "difficulty": "Low|Medium|High", "priority": "Must Study", "prob": 90 }
+    ],
+    "distillation": "# [Topic] Strategic Briefing\\n\\n## 1. Prime Theory\\n[Detailed explanation of the main concept]\\n\\n## 2. Structural Breakdown\\n* concept - description\\n* concept - description\\n\\n## 3. Why This Matters\\n[Contextualize for exams]\\n\\n## 4. Technical Nuance & Warning\\n[Explain common student pitfalls/misunderstandings in this topic]"
   }
 
-  Context: "${rawText}"
+  STRICT INSTRUCTION: Be verbose and pedagogical in the 'distillation'. Use multiple paragraphs and bold key terms. DO NOT provide a single-sentence summary.
+  STRICT: NO "Transformers" or "Hackathon" generic data unless in the text.
+  CONTEXT: "${rawText}"
 `;
 
-        console.log("Sending prompt to OpenAI...");
+        console.log("Calling AI...");
+        console.time("openai-call");
+        const modelName = process.env.OPENAI_BASE_URL?.includes("openrouter.ai")
+            ? "openai/gpt-4o-mini"
+            : "gpt-4o-mini";
+
         const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: modelName,
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" },
-            max_tokens: 2048,
+            max_tokens: 3000,
+            temperature: 0.3,
         }).catch(err => {
             console.error("OpenAI call failed:", err);
+            if (err.status === 401 || err.status === 403) {
+                throw new Error(`AI Authentication Failed (Status ${err.status}).`);
+            }
             throw new Error(`OpenAI API failed: ${err.message}`);
         });
+        console.timeEnd("openai-call");
 
 
-        console.log("OpenAI response received");
         const rawContent = response.choices[0].message.content;
-        console.log("Raw OpenAI Response:", rawContent?.slice(0, 200), "...");
         if (!rawContent) throw new Error("No content generated by OpenAI");
 
+        const finalized = JSON.parse(rawContent);
+        console.timeEnd("predict-api-total");
 
-        const data = JSON.parse(rawContent);
-        console.log("JSON parsed successfully");
-
-        // Helper to parse CSV strings back to Objects
-        const parseCSV = (csv: string, keys: string[]) => {
-            if (!csv) return [];
-            return csv.split('\n').filter(line => line.trim()).map(line => {
-                const values = line.split('|');
-                const obj: any = {};
-                keys.forEach((key, i) => {
-                    let val = values[i]?.trim();
-                    if (key === 'confidence' || key === 'prob') obj[key] = parseFloat(val) || 0;
-                    else if (key === 'tags') obj[key] = val ? val.split(',').map(t => t.trim()) : [];
-                    else obj[key] = val || "";
-                });
-                return obj;
-            });
-        };
-
-        const finalized = {
-            predictions: parseCSV(data.predictions, ['question', 'confidence', 'reason']),
-            technicalMatrix: parseCSV(data.technicalMatrix, ['concept', 'difficulty', 'priority', 'prob']),
-            mermaidChart: data.mermaidChart,
-            vaultBlocks: parseCSV(data.vaultBlocks, ['title', 'content', 'category', 'tags']),
-            dependencyMatrix: parseCSV(data.dependencyMatrix, ['library', 'impact', 'role', 'version']),
-            gapAnalysis: parseCSV(data.gapAnalysis, ['gap', 'vulnerability', 'bridgeAction', 'type']),
-            distillation: data.distillation
-        };
-
-        console.log("Prediction finalization complete");
-        return NextResponse.json(finalized);
+        return NextResponse.json({
+            ...finalized,
+            // Provide empty fallbacks for fields removed but expected by UI
+            mermaidChart: "",
+            vaultBlocks: [],
+            dependencyMatrix: [],
+            gapAnalysis: []
+        });
     } catch (error: any) {
         console.error("--- PREDICTION ENGINE ERROR ---");
         console.error("Message:", error.message);

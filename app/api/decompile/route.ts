@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import dotenv from "dotenv";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+dotenv.config({ override: true });
+
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+    baseURL: process.env.OPENAI_BASE_URL || undefined
+});
 
 export async function POST(req: NextRequest) {
     try {
@@ -39,11 +45,21 @@ CODE TO ANALYZE:
 ${code.slice(0, 6000)}
 \`\`\``;
 
+        const modelName = process.env.OPENAI_BASE_URL?.includes("openrouter.ai")
+            ? "openai/gpt-4o-mini"
+            : "gpt-4o-mini";
+
         const completion = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: modelName,
             messages: [{ role: "user", content: prompt }],
             response_format: { type: "json_object" },
             temperature: 0.3,
+        }).catch(err => {
+            console.error("Decompiler OpenAI call failed:", err);
+            if (err.status === 401 || err.status === 403) {
+                throw new Error(`AI Authentication Failed (Status ${err.status}). Check API key/baseURL.`);
+            }
+            throw err;
         });
 
         const content = completion.choices[0]?.message?.content || "{}";

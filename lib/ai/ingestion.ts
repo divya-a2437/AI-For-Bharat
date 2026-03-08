@@ -1,27 +1,22 @@
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
-import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+import pdf from "pdf-parse";
 
 export const processPDF = async (file: Blob) => {
     try {
         console.log("processPDF: Starting extraction");
 
-        // Convert Blob to Buffer for better compatibility in Node.js
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
-        // Pass the Blob back but initialized from the Buffer to ensure it's fresh
-        const loader = new PDFLoader(new Blob([buffer]), {
-            splitPages: false // Try to get all text at once for better context sometimes
-        });
+        // Use pdf-parse for more direct and reliable text extraction
+        const data = await pdf(buffer);
+        const text = data.text;
 
-        const rawDocs = await loader.load();
+        console.log(`processPDF: Extracted ${text.length} characters`);
 
-        console.log(`processPDF: Loaded ${rawDocs.length} pages`);
-
-        if (rawDocs.length === 0 || !rawDocs[0].pageContent) {
-            console.warn("processPDF: No text extracted from PDF, trying raw buffer conversion fallback");
-            // Fallback for some weird PDF structures
-            return [{ pageContent: buffer.toString('utf-8').replace(/[^\x20-\x7E\n]/g, ''), metadata: {} }];
+        if (!text || text.trim().length < 10) {
+            console.warn("processPDF: Very little text extracted, PDF might be scanned/image-based");
+            // No fallback for images yet, but at least we know
         }
 
         const splitter = new RecursiveCharacterTextSplitter({
@@ -29,7 +24,8 @@ export const processPDF = async (file: Blob) => {
             chunkOverlap: 200,
         });
 
-        const chunks = await splitter.splitDocuments(rawDocs);
+        // Create virtual document for splitter
+        const chunks = await splitter.createDocuments([text]);
         console.log(`processPDF: Split into ${chunks.length} chunks`);
         return chunks;
     } catch (error: any) {

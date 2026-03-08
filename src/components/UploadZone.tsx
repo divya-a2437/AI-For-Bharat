@@ -160,11 +160,7 @@ export default function UploadZone({ onUpload }: UploadZoneProps) {
             </div>
 
             {/* Footer Info - Compact */}
-            <div className="flex items-center gap-6 mt-8 w-full justify-between px-2 opacity-50">
-                <div className="flex items-center gap-1.5">
-                    <Lock size={12} className="text-slate-400" />
-                    <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap">Max size: 500MB</span>
-                </div>
+            <div className="flex items-center gap-6 mt-8 w-full justify-end px-2 opacity-50">
                 <div className="flex items-center gap-1.5">
                     <div className="h-1 w-1 rounded-full bg-violet-400" />
                     <span className="text-[10px] text-slate-400 truncate">
