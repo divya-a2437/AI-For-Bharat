@@ -1,8 +1,8 @@
-# 👻 Academic Ghostwriter
+# 👻 Ghostwriter
 
 **High-Fidelity Study Extraction Engine**
 
-Academic Ghostwriter is a premium, AI-native study assistant designed to distill lecture noise, dense PDFs, and complex presentations into exam-ready clarity. Built with the cutting-edge **Gemini 2.0 Flash** model, it provides near-instant synthesis with a high-end, cinematic user experience.
+Ghostwriter is a premium, AI-native study assistant designed to distill lecture noise, dense PDFs, and complex presentations into exam-ready clarity. Built with the cutting-edge AWS System Architecture, it provides near-instant synthesis with a high-end, cinematic user experience.
 
 ---
 
@@ -27,21 +27,32 @@ Academic Ghostwriter is a premium, AI-native study assistant designed to distill
 
 ## 🛠️ Technology Stack
 
-- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
-- **AI Engine**: [Google Gemini 2.0 Flash](https://ai.google.dev/models/gemini) / [OpenAI GPT-4o](https://openai.com/)
-- **Visuals**: [Mermaid.js](https://mermaid.js.org/) for Logic Flows
-- **Styling**: [Tailwind CSS 4.0](https://tailwindcss.com/)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Parsing**: [OfficeParser](https://www.npmjs.com/package/officeparser) (for DOCX/PPTX)
+- **AWS Cloud Services (Backend)**
+- Service Amazon Bedrock: AI reasoning engine Claude 3.5 Sonnet for multimodal synthesis 
+- Amazon Textract: Document OCR Extract text, formulas, tables from PDFs 
+- AWS Lambda: Serverless compute Neural orchestrator, document parser 
+- Amazon S3: Storage + hosting User uploads, processed content, frontend assets 
+- Amazon DynamoDB: NoSQL database User profiles, study guides, flashcards 
+- Amazon API Gateway: API management RESTful + WebSocket endpoints 
+- Amazon CloudFront: Global CDN 450+ edge locations worldwide 
+- AWS Cognito: Authentication User pools, JWT tokens, MFA
 
+- **Frontend Stack**
+- Next.js 15 React framework with App Router, SSR/SSG 
+- React 19 UI component library 
+- TypeScript 5 Type-safe development 
+- Tailwind CSS 4.0 Utility-first styling, glassmorphism 
+- Framer Motion Cinematic animations, typewriter effect 
+- Mermaid.js Auto-generated logic flow diagrams 
+- Lucide React Modern icon library
+  
 ---
 
 ## 🚀 Getting Started
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/kunixx976/GHOSTWRITER.git
+git clone https://github.com/divya-a2437/AI-For-Bharat.git
 cd GHOSTWRITER
 ```
 
@@ -53,8 +64,14 @@ npm install
 ### 3. Setup Environment Variables
 Create a `.env` file in the root directory:
 ```env
-OPENAI_API_KEY=your_openai_api_key_here
-GEMINI_API_KEY=your_google_gemini_api_key_here
+WS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=your_access_key_id
+AWS_SECRET_ACCESS_KEY=your_secret_access_key
+KNOWLEDGE_TABLE=ghostwriter-knowledge-vault
+DATA_LAKE_BUCKET=ghostwriter-multimodal-data-lake
+TEXTRACT_SNS_TOPIC_ARN=arn:aws:sns:us-east-1:YOUR_ACCOUNT_ID:ghostwriter-textract-notifications
+TEXTRACT_ROLE_ARN=arn:aws:iam::YOUR_ACCOUNT_ID:role/GhostwriterTextractRole
+BEDROCK_MODEL_ID=anthropic.claude-3-5-sonnet-20241022-v2:0
 ```
 
 ### 4. Run the development server
